@@ -10,8 +10,8 @@ Shader "Hidden/Universal Render Pipeline/Stop NaN"
         #pragma exclude_renderers gles
         #pragma target 3.5
 
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/PostProcessing/Common.hlsl"
 
         #define NAN_COLOR half3(0.0, 0.0, 0.0)
 

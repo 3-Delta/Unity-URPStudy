@@ -5,7 +5,7 @@
 #define MAX_VISIBLE_LIGHTS_SSBO 256
 #define USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA 0
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderTypes.cs.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderTypes.cs.hlsl"
 
 #if defined(SHADER_API_MOBILE) || (defined(SHADER_API_GLCORE) && !defined(SHADER_API_SWITCH)) || defined(SHADER_API_GLES) || defined(SHADER_API_GLES3) // Workaround for bug on Nintendo Switch where SHADER_API_GLCORE is mistakenly defined
     #define MAX_VISIBLE_LIGHTS 32
@@ -75,8 +75,8 @@ CBUFFER_END
 #define UNITY_MATRIX_IT_MV transpose(mul(UNITY_MATRIX_I_M, UNITY_MATRIX_I_V))
 #define UNITY_MATRIX_MVP   mul(UNITY_MATRIX_VP, UNITY_MATRIX_M)
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityInput.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/UnityInput.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/UnityInstancing.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/SpaceTransforms.hlsl"
 
 #endif

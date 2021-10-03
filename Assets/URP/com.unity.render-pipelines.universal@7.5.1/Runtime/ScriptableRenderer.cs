@@ -210,8 +210,10 @@ namespace UnityEngine.Rendering.Universal
 
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
         List<ScriptableRendererFeature> m_RendererFeatures = new List<ScriptableRendererFeature>(10);
+        
         RenderTargetIdentifier m_CameraColorTarget;
         RenderTargetIdentifier m_CameraDepthTarget;
+        
         bool m_FirstTimeCameraColorTargetIsBound = true; // flag used to track when m_CameraColorTarget should be cleared (if necessary), as well as other special actions only performed the first time m_CameraColorTarget is bound as a render target
         bool m_FirstTimeCameraDepthTargetIsBound = true; // flag used to track when m_CameraDepthTarget should be cleared (if necessary), the first time m_CameraDepthTarget is bound as a render target
         bool m_XRRenderTargetNeedsClear = false;
@@ -241,16 +243,6 @@ namespace UnityEngine.Rendering.Universal
             new RenderTargetIdentifier[]{0, 0, 0, 0, 0, 0, 0, 0 },  // m_TrimmedColorAttachmentCopies[8] is an array of 8 RenderTargetIdentifiers
         };
 
-        internal static void ConfigureActiveTarget(RenderTargetIdentifier colorAttachment,
-            RenderTargetIdentifier depthAttachment)
-        {
-            m_ActiveColorAttachments[0] = colorAttachment;
-            for (int i = 1; i < m_ActiveColorAttachments.Length; ++i)
-                m_ActiveColorAttachments[i] = 0;
-
-            m_ActiveDepthAttachment = depthAttachment;
-        }
-
         public ScriptableRenderer(ScriptableRendererData data)
         {
             foreach (var feature in data.rendererFeatures)
@@ -272,6 +264,15 @@ namespace UnityEngine.Rendering.Universal
 
         protected virtual void Dispose(bool disposing)
         {
+        }
+        
+        internal static void ConfigureActiveTarget(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment)
+        {
+            m_ActiveColorAttachments[0] = colorAttachment;
+            for (int i = 1; i < m_ActiveColorAttachments.Length; ++i)
+                m_ActiveColorAttachments[i] = 0;
+
+            m_ActiveDepthAttachment = depthAttachment;
         }
 
         /// <summary>
@@ -311,8 +312,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="cullingParameters">Use this to change culling parameters used by the render pipeline.</param>
         /// <param name="cameraData">Current render state information.</param>
-        public virtual void SetupCullingParameters(ref ScriptableCullingParameters cullingParameters,
-            ref CameraData cameraData)
+        public virtual void SetupCullingParameters(ref ScriptableCullingParameters cullingParameters, ref CameraData cameraData)
         {
         }
 
@@ -442,29 +442,6 @@ namespace UnityEngine.Rendering.Universal
             m_ActiveRenderPassQueue.Add(pass);
         }
 
-        #region deprecated
-
-        [Obsolete("Use GetCameraClearFlag(ref CameraData cameraData) instead")]
-        protected static ClearFlag GetCameraClearFlag(CameraClearFlags cameraClearFlags)
-        {
-#if UNITY_EDITOR
-            // We need public API to tell if FrameDebugger is active and enabled. In that case
-            // we want to force a clear to see properly the drawcall stepping.
-            // For now, to fix FrameDebugger in Editor, we force a clear.
-            cameraClearFlags = CameraClearFlags.SolidColor;
-#endif
-            // Always clear on first render pass in mobile as it's same perf of DontCare and avoid tile clearing issues.
-            if (Application.isMobilePlatform)
-                return ClearFlag.All;
-
-            if ((cameraClearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null) ||
-                cameraClearFlags == CameraClearFlags.Nothing)
-                return ClearFlag.Depth;
-
-            return ClearFlag.All;
-        }
-        #endregion
-
         /// <summary>
         /// Returns a clear flag based on CameraClearFlags.
         /// </summary>
@@ -534,7 +511,6 @@ namespace UnityEngine.Rendering.Universal
             m_ActiveColorAttachments[0] = BuiltinRenderTextureType.CameraTarget;
             for (int i = 1; i < m_ActiveColorAttachments.Length; ++i)
                 m_ActiveColorAttachments[i] = 0;
-
             m_ActiveDepthAttachment = BuiltinRenderTextureType.CameraTarget;
 
             m_InsideStereoRenderBlock = false;
@@ -894,7 +870,6 @@ namespace UnityEngine.Rendering.Universal
         void InternalFinishRendering(ScriptableRenderContext context, bool resolveFinalTarget)
         {
             CommandBuffer cmd = CommandBufferPool.Get(k_ReleaseResourcesTag);
-
             for (int i = 0; i < m_ActiveRenderPassQueue.Count; ++i)
                 m_ActiveRenderPassQueue[i].FrameCleanup(cmd);
 
@@ -911,14 +886,13 @@ namespace UnityEngine.Rendering.Universal
             CommandBufferPool.Release(cmd);
         }
 
+        // 插入排序
         internal static void SortStable(List<ScriptableRenderPass> list)
         {
-            int j;
             for (int i = 1; i < list.Count; ++i)
             {
                 ScriptableRenderPass curr = list[i];
-
-                j = i - 1;
+                int j = i - 1;
                 for (; j >= 0 && curr < list[j]; --j)
                     list[j + 1] = list[j];
 

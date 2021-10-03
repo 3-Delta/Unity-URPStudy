@@ -9,12 +9,12 @@ Shader "Hidden/Universal Render Pipeline/GaussianDepthOfField"
 
         #pragma target 3.5
 
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Filtering.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Filtering.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/PostProcessing/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/DeclareDepthTexture.hlsl"
 
         TEXTURE2D_X(_MainTex);
         TEXTURE2D_X(_ColorTexture);

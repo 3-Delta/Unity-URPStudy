@@ -1,8 +1,8 @@
 #ifndef UNIVERSAL_META_PASS_INCLUDED
 #define UNIVERSAL_META_PASS_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl"
 
 CBUFFER_START(UnityMetaPass)
 // x = use uv1 as raster position

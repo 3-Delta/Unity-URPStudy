@@ -1,8 +1,8 @@
 #ifndef UNIVERSAL_SHADOWS_INCLUDED
 #define UNIVERSAL_SHADOWS_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Shadow/ShadowSamplingTent.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Shadow/ShadowSamplingTent.hlsl"
 #include "Core.hlsl"
 
 #define SHADOWS_SCREEN 0

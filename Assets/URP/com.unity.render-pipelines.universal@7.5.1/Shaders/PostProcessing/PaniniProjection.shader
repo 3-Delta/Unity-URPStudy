@@ -9,8 +9,8 @@ Shader "Hidden/Universal Render Pipeline/PaniniProjection"
 
         #pragma multi_compile_local _GENERIC _UNIT_DISTANCE
 
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/PostProcessing/Common.hlsl"
 
         TEXTURE2D_X(_MainTex);
 

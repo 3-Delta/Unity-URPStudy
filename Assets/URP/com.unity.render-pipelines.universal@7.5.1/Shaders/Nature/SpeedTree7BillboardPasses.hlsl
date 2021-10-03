@@ -1,7 +1,7 @@
 #ifndef UNIVERSAL_SPEEDTREE7BILLBOARD_PASSES_INCLUDED
 #define UNIVERSAL_SPEEDTREE7BILLBOARD_PASSES_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl"
 #include "SpeedTree7CommonPasses.hlsl"
 
 void InitializeData(inout SpeedTreeVertexInput input, out half2 outUV, out half outHueVariation)

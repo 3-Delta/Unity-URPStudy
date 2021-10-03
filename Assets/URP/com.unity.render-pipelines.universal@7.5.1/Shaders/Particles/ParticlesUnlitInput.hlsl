@@ -1,7 +1,7 @@
 #ifndef UNIVERSAL_PARTICLES_UNLIT_INPUT_INCLUDED
 #define UNIVERSAL_PARTICLES_UNLIT_INPUT_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Particles.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Particles.hlsl"
 
 CBUFFER_START(UnityPerMaterial)
 float4 _SoftParticleFadeParams;

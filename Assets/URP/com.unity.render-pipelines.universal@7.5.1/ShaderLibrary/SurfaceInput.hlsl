@@ -1,9 +1,9 @@
 #ifndef UNIVERSAL_INPUT_SURFACE_INCLUDED
 #define UNIVERSAL_INPUT_SURFACE_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Packing.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/CommonMaterial.hlsl"
 
 TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
 TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);

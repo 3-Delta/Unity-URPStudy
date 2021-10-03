@@ -10,8 +10,8 @@ namespace UnityEditor.Rendering.Universal
         static readonly uint k_Version = 2;
         static readonly int k_Order = 4;
 
-        static readonly string k_ShaderPath = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurface.shadergraph";
-        static readonly string k_ShaderTransparentPath = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurfaceTransparent.shadergraph";
+        static readonly string k_ShaderPath = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurface.shadergraph";
+        static readonly string k_ShaderTransparentPath = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Runtime/Materials/ArnoldStandardSurface/ArnoldStandardSurfaceTransparent.shadergraph";
 
         public override uint GetVersion()
         {

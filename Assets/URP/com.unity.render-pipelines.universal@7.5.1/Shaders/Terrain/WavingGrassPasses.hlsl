@@ -1,7 +1,7 @@
 #ifndef UNIVERSAL_WAVING_GRASS_PASSES_INCLUDED
 #define UNIVERSAL_WAVING_GRASS_PASSES_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl"
 
 struct GrassVertexInput
 {

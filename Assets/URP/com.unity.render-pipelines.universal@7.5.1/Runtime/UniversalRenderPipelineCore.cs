@@ -9,24 +9,24 @@ using Lightmapping = UnityEngine.Experimental.GlobalIllumination.Lightmapping;
 
 namespace UnityEngine.Rendering.Universal
 {
-      public enum MixedLightingSetup
+    public enum MixedLightingSetup
     {
         None,
         ShadowMask,
         Subtractive,
     };
 
-      public struct RenderingData
+    public struct RenderingData
     {
         public CullingResults cullResults;
+        
         public CameraData cameraData;
         public LightData lightData;
         public ShadowData shadowData;
         public PostProcessingData postProcessingData;
+        
         public bool supportsDynamicBatching;
         public PerObjectData perObjectData;
-        [Obsolete("killAlphaInFinalBlit is deprecated in the Universal Render Pipeline since it is no longer needed on any supported platform.")]
-        public bool killAlphaInFinalBlit;
 
         /// <summary>
         /// True if post-processing effect is enabled while rendering the camera stack.
@@ -34,7 +34,7 @@ namespace UnityEngine.Rendering.Universal
         public bool postProcessingEnabled;
     }
 
-      public struct LightData
+    public struct LightData
     {
         public int mainLightIndex;
         public int additionalLightsCount;
@@ -44,7 +44,7 @@ namespace UnityEngine.Rendering.Universal
         public bool supportsMixedLighting;
     }
 
-      public struct CameraData
+    public struct CameraData
     {
         // Internal camera data as we are not yet sure how to expose View in stereo context.
         // We might change this API soon.
@@ -118,6 +118,7 @@ namespace UnityEngine.Rendering.Universal
         /// to a render texture in non OpenGL platforms. If you are doing a custom Blit pass to copy camera textures
         /// (_CameraColorTexture, _CameraDepthAttachment) you need to check this flag to know if you should flip the
         /// matrix when rendering with for cmd.Draw* and reading from camera textures.
+        /// 根据opengl平台或者dx平台判断y轴
         /// </summary>
         public bool IsCameraProjectionMatrixFlipped()
         {
@@ -128,6 +129,7 @@ namespace UnityEngine.Rendering.Universal
             if (renderer != null)
             {
                 bool renderingToTexture = renderer.cameraColorTarget != BuiltinRenderTextureType.CameraTarget || targetTexture != null;
+                // rt渲染并且graphicsUVStartsAtTop
                 return SystemInfo.graphicsUVStartsAtTop && renderingToTexture;
             }
 
@@ -166,7 +168,7 @@ namespace UnityEngine.Rendering.Universal
         public bool resolveFinalTarget;
     }
 
-      public struct ShadowData
+    public struct ShadowData
     {
         public bool supportsMainLightShadows;
         public bool requiresScreenSpaceShadowResolve;
@@ -180,6 +182,12 @@ namespace UnityEngine.Rendering.Universal
         public bool supportsSoftShadows;
         public int shadowmapDepthBufferBits;
         public List<Vector4> bias;
+    }
+    
+    public struct PostProcessingData
+    {
+        public ColorGradingMode gradingMode;
+        public int lutSize;
     }
 
     internal static class ShaderPropertyId
@@ -204,12 +212,6 @@ namespace UnityEngine.Rendering.Universal
         public static readonly int inverseCameraProjectionMatrix = Shader.PropertyToID("unity_CameraInvProjection");
         public static readonly int worldToCameraMatrix = Shader.PropertyToID("unity_WorldToCamera");
         public static readonly int cameraToWorldMatrix = Shader.PropertyToID("unity_CameraToWorld");
-    }
-
-    public struct PostProcessingData
-    {
-        public ColorGradingMode gradingMode;
-        public int lutSize;
     }
 
     public static class ShaderKeywordStrings
@@ -256,12 +258,7 @@ namespace UnityEngine.Rendering.Universal
     public sealed partial class UniversalRenderPipeline
     {
         static List<Vector4> m_ShadowBiasData = new List<Vector4>();
-
-        /// <summary>
-        /// Checks if a camera is a game camera.
-        /// </summary>
-        /// <param name="camera">Camera to check state from.</param>
-        /// <returns>true if given camera is a game camera, false otherwise.</returns>
+        
         public static bool IsGameCamera(Camera camera)
         {
             if (camera == null)
@@ -282,16 +279,9 @@ namespace UnityEngine.Rendering.Universal
 
             bool isGameCamera = IsGameCamera(camera);
             bool isCompatWithXRDimension = true;
-#if ENABLE_VR && ENABLE_VR_MODULE
-            isCompatWithXRDimension &= (camera.targetTexture ? camera.targetTexture.dimension == UnityEngine.XR.XRSettings.deviceEyeTextureDimension : true);
-#endif
             return XRGraphics.enabled && isGameCamera && (camera.stereoTargetEye == StereoTargetEyeMask.Both) && isCompatWithXRDimension;
         }
 
-        /// <summary>
-        /// Returns the current render pipeline asset for the current quality setting.
-        /// If no render pipeline asset is assigned in QualitySettings, then returns the one assigned in GraphicsSettings.
-        /// </summary>
         public static UniversalRenderPipelineAsset asset
         {
             get => GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
@@ -306,54 +296,11 @@ namespace UnityEngine.Rendering.Universal
         {
             if (camera == null)
                 throw new ArgumentNullException("camera");
-
-#if ENABLE_VR && ENABLE_VR_MODULE
-            return IsStereoEnabled(camera) && !CanXRSDKUseSinglePass(camera) && XR.XRSettings.stereoRenderingMode == XR.XRSettings.StereoRenderingMode.MultiPass;
-#else
-            return false;
-#endif
-        }
-
-#if ENABLE_VR && ENABLE_VR_MODULE
-        static XR.XRDisplaySubsystem GetXRDisplaySubsystem()
-        {
-            XR.XRDisplaySubsystem display = null;
-            SubsystemManager.GetInstances(displaySubsystemList);
-
-            if (displaySubsystemList.Count > 0)
-                display = displaySubsystemList[0];
-
-            return display;
-        }
-
-        // NB: This method is required for a hotfix in Hololens to prevent creating a render texture when using a renderer
-        // with custom render pass.
-        // TODO: Remove this method and usages when we have proper dependency tracking in the pipeline to know
-        // when a render pass requires camera color as input.
-        internal static bool IsRunningHololens(Camera camera)
-        {
-#if PLATFORM_WINRT
-            if (IsStereoEnabled(camera))
-            {
-                var platform = Application.platform;
-                if (platform == RuntimePlatform.WSAPlayerX86 || platform == RuntimePlatform.WSAPlayerARM)
-                {
-                    var displaySubsystem = GetXRDisplaySubsystem();
-                    var subsystemDescriptor = displaySubsystem?.SubsystemDescriptor ?? null;
-                    string id = subsystemDescriptor?.id ?? "";
-
-                    if (id.Contains("Windows Mixed Reality Display"))
-                        return true;
-
-                    if (!XR.WSA.HolographicSettings.IsDisplayOpaque)
-                        return true;
-                }
-            }
-#endif
+            
             return false;
         }
-#endif
-
+        
+        // camera.depth从小到大排序
         Comparison<Camera> cameraComparison = (camera1, camera2) => { return (int) camera1.depth - (int) camera2.depth; };
 		void SortCameras(Camera[] cameras)
         {

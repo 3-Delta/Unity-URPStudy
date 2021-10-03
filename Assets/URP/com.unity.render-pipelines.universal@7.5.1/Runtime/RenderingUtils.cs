@@ -317,6 +317,7 @@ namespace UnityEngine.Rendering.Universal
 
         /// <summary>
         /// Return true if colorBuffers is an actual MRT setup
+        /// colorbuffer个数大于1表示MRT
         /// </summary>
         /// <param name="colorBuffers"></param>
         /// <returns></returns>

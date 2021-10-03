@@ -8,6 +8,7 @@ namespace UnityEditor.Rendering.Universal
     {
         static HashSet<SceneView> sceneViewHaveValidateFunction = new HashSet<SceneView>();
 
+        // todo urp不支持overdraw的渲染模式？
         static bool RejectDrawMode(SceneView.CameraMode cameraMode)
         {
             if (cameraMode.drawMode == DrawCameraMode.TexturedWire ||

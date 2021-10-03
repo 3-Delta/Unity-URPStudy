@@ -380,7 +380,7 @@ namespace UnityEditor.ShaderGraph
                 return false;
             
             // Get Template preprocessor
-            string templatePath = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Templates";
+            string templatePath = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Templates";
             var templatePreprocessor = new ShaderSpliceUtil.TemplatePreprocessor(activeFields, spliceCommands, 
                 isDebug, templatePath, sourceAssetDependencyPaths, assemblyName, resourceClassName);
             

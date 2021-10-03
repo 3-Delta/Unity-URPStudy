@@ -20,8 +20,8 @@ namespace UnityEditor.Experimental.Rendering.Universal
             displayName = "Sprite Lit",
             referenceName = "SHADERPASS_SPRITELIT",
             lightMode = "Universal2D",
-            passInclude = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/SpriteLitPass.hlsl",
-            varyingsInclude = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/Varyings.hlsl",
+            passInclude = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Includes/SpriteLitPass.hlsl",
+            varyingsInclude = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Includes/Varyings.hlsl",
             useInPreview = true,
 
             // Port mask
@@ -48,11 +48,11 @@ namespace UnityEditor.Experimental.Rendering.Universal
             // Pass setup
             includes = new List<string>()
             {
-                "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl",
-                "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/LightingUtility.hlsl",
+                "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/2D/Include/LightingUtility.hlsl",
             },
             pragmas = new List<string>()
             {
@@ -76,8 +76,8 @@ namespace UnityEditor.Experimental.Rendering.Universal
             displayName = "Sprite Normal",
             referenceName = "SHADERPASS_SPRITENORMAL",
             lightMode = "NormalsRendering",
-            passInclude = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/SpriteNormalPass.hlsl",
-            varyingsInclude = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/Varyings.hlsl",
+            passInclude = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Includes/SpriteNormalPass.hlsl",
+            varyingsInclude = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Includes/Varyings.hlsl",
             useInPreview = true,
 
             // Port mask
@@ -103,11 +103,11 @@ namespace UnityEditor.Experimental.Rendering.Universal
             // Pass setup
             includes = new List<string>()
             {
-                "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl",
-                "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/NormalsRenderingShared.hlsl"
+                "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/2D/Include/NormalsRenderingShared.hlsl"
             },
             pragmas = new List<string>()
             {
@@ -123,8 +123,8 @@ namespace UnityEditor.Experimental.Rendering.Universal
             displayName = "Sprite Forward",
             referenceName = "SHADERPASS_SPRITEFORWARD",
             lightMode = "UniversalForward",
-            passInclude = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/SpriteForwardPass.hlsl",
-            varyingsInclude = "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/Varyings.hlsl",
+            passInclude = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Includes/SpriteForwardPass.hlsl",
+            varyingsInclude = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/ShaderGraph/Includes/Varyings.hlsl",
             useInPreview = true,
 
             // Port mask
@@ -150,10 +150,10 @@ namespace UnityEditor.Experimental.Rendering.Universal
             // Pass setup
             includes = new List<string>()
             {
-                "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl",
-                "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl",
+                "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
+                "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
             },
             pragmas = new List<string>()
             {

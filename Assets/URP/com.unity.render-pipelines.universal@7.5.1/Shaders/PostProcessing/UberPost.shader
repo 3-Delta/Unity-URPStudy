@@ -10,10 +10,10 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
         #pragma multi_compile_local _ _DITHERING
 		#pragma multi_compile_local _ _LINEAR_TO_SRGB_CONVERSION
 
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Filtering.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Filtering.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/PostProcessing/Common.hlsl"
 
         // Hardcoded dependencies to reduce the number of variants
         #if _BLOOM_LQ || _BLOOM_HQ || _BLOOM_LQ_DIRT || _BLOOM_HQ_DIRT

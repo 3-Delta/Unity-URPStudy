@@ -7,10 +7,10 @@ Shader "Hidden/Universal Render Pipeline/FinalPost"
         #pragma multi_compile_local _ _DITHERING
 		#pragma multi_compile_local _ _LINEAR_TO_SRGB_CONVERSION
         
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/PostProcessing/Common.hlsl"
 
         TEXTURE2D_X(_BlitTex);
         TEXTURE2D(_Grain_Texture);

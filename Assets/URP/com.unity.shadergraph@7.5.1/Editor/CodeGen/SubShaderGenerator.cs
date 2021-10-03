@@ -235,12 +235,12 @@ namespace UnityEditor.ShaderGraph
                 finalShader.AppendNewLine();
 
                 finalShader.AppendLine(@"HLSLINCLUDE");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.render-pipelines.core/ShaderLibrary/EntityLighting.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Packing.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/NormalSurfaceGradient.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/UnityInstancing.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/EntityLighting.hlsl""");
                 finalShader.AppendLine(@"#include ""Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariables.hlsl""");
                 finalShader.AppendLine(@"#include ""Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl""");
                 finalShader.AppendLine(@"#include ""Packages/com.unity.shadergraph/ShaderGraphLibrary/Functions.hlsl""");

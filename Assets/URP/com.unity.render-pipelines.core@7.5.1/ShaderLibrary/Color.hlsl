@@ -1,7 +1,7 @@
 #ifndef UNITY_COLOR_INCLUDED
 #define UNITY_COLOR_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/ACES.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/ACES.hlsl"
 
 //-----------------------------------------------------------------------------
 // Gamma space - Assume positive values

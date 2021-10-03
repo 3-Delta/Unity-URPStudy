@@ -9,8 +9,8 @@ namespace UnityEditor.Rendering.Universal
     {
         static readonly uint k_Version = 1;
         static readonly int k_Order = 4;
-        static readonly string k_ShaderPath = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMax.ShaderGraph";
-        static readonly string k_ShaderTransparentPath = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMaxTransparent.ShaderGraph";
+        static readonly string k_ShaderPath = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMax.ShaderGraph";
+        static readonly string k_ShaderTransparentPath = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Runtime/Materials/PhysicalMaterial3DsMax/PhysicalMaterial3DsMaxTransparent.ShaderGraph";
 
         public override uint GetVersion()
         {

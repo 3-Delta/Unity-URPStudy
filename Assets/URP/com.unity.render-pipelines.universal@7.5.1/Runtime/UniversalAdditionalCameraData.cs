@@ -7,14 +7,6 @@ using UnityEngine.Serialization;
 using UnityEngine.Rendering;
 using System.ComponentModel;
 
-namespace UnityEngine.Rendering.LWRP
-{
-    [Obsolete("LWRP -> Universal (UnityUpgradable) -> UnityEngine.Rendering.Universal.UniversalAdditionalCameraData", true)]
-    public class LWRPAdditionalCameraData
-    {
-    }
-}
-
 namespace UnityEngine.Rendering.Universal
 {
     /// <summary>
@@ -412,7 +404,7 @@ namespace UnityEngine.Rendering.Universal
 
         public void OnDrawGizmos()
         {
-            string path = "Packages/com.unity.render-pipelines.universal/Editor/Gizmos/";
+            string path = "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Editor/Gizmos/";
             string gizmoName = "";
             Color tint = Color.white;
 

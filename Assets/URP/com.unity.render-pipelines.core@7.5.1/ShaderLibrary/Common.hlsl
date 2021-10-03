@@ -161,26 +161,26 @@
 #elif defined(SHADER_API_PSSL)
 #include "Packages/com.unity.render-pipelines.ps4/ShaderLibrary/API/PSSL.hlsl"
 #elif defined(SHADER_API_D3D11)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/D3D11.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/D3D11.hlsl"
 #elif defined(SHADER_API_METAL)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/Metal.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/Metal.hlsl"
 #elif defined(SHADER_API_VULKAN)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/Vulkan.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/Vulkan.hlsl"
 #elif defined(SHADER_API_SWITCH)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/Switch.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/Switch.hlsl"
 #elif defined(SHADER_API_GLCORE)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/GLCore.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/GLCore.hlsl"
 #elif defined(SHADER_API_GLES3)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/GLES3.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/GLES3.hlsl"
 #elif defined(SHADER_API_GLES)
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/GLES2.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/GLES2.hlsl"
 #else
 #error unsupported shader api
 #endif
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/Validate.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/API/Validate.hlsl"
 
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Macros.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Random.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Macros.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Random.hlsl"
 
 // ----------------------------------------------------------------------------
 // Common intrinsic (general implementation of intrinsic available on some platform)
@@ -213,7 +213,7 @@
 #define WaveGetLaneCount ERROR_ON_UNSUPPORTED_FUNCTION(WaveGetLaneCount)
 #endif
 
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonDeprecated.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/CommonDeprecated.hlsl"
 
 #if !defined(SHADER_API_GLES)
 

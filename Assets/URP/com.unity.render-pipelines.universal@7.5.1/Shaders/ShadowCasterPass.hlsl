@@ -1,8 +1,8 @@
 #ifndef UNIVERSAL_SHADOW_CASTER_PASS_INCLUDED
 #define UNIVERSAL_SHADOW_CASTER_PASS_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Shadows.hlsl"
 
 float3 _LightDirection;
 

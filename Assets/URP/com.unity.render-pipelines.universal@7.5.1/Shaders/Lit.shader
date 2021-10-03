@@ -150,8 +150,8 @@ Shader "Universal Render Pipeline/Lit"
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/LitInput.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/ShadowCasterPass.hlsl"
             ENDHLSL
         }
 
@@ -182,8 +182,8 @@ Shader "Universal Render Pipeline/Lit"
             // GPU Instancing
             #pragma multi_compile_instancing
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/LitInput.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/DepthOnlyPass.hlsl"
             ENDHLSL
         }
 
@@ -211,8 +211,8 @@ Shader "Universal Render Pipeline/Lit"
 
             #pragma shader_feature _SPECGLOSSMAP
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitMetaPass.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/LitInput.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/LitMetaPass.hlsl"
 
             ENDHLSL
         }
@@ -235,8 +235,8 @@ Shader "Universal Render Pipeline/Lit"
             #pragma shader_feature _ALPHATEST_ON
             #pragma shader_feature _ALPHAPREMULTIPLY_ON
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/Universal2D.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/LitInput.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/Utils/Universal2D.hlsl"
             ENDHLSL
         }
 

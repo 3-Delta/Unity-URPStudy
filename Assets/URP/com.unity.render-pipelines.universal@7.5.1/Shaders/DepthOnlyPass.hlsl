@@ -1,7 +1,7 @@
 #ifndef UNIVERSAL_DEPTH_ONLY_PASS_INCLUDED
 #define UNIVERSAL_DEPTH_ONLY_PASS_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
 
 struct Attributes
 {

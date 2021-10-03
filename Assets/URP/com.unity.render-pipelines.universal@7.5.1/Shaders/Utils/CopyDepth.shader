@@ -19,7 +19,7 @@ Shader "Hidden/Universal Render Pipeline/CopyDepth"
 
             #pragma multi_compile _ _DEPTH_MSAA_2 _DEPTH_MSAA_4 _DEPTH_MSAA_8
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/CopyDepthPass.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/Utils/CopyDepthPass.hlsl"
 
             ENDHLSL
         }

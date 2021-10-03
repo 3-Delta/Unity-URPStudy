@@ -9,15 +9,6 @@ using UnityEditorInternal;
 using System.ComponentModel;
 using System.Linq;
 
-namespace UnityEngine.Rendering.LWRP
-{
-    [Obsolete("LWRP -> Universal (UnityUpgradable) -> UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset", true)]
-    public class LightweightRenderPipelineAsset
-    {
-    }
-}
-
-
 namespace UnityEngine.Rendering.Universal
 {
       public enum ShadowCascadesOption
@@ -276,8 +267,8 @@ namespace UnityEngine.Rendering.Universal
                 case RendererType.ForwardRenderer:
                     return CreateInstance<ForwardRendererData>();
                 // 2D renderer is experimental
-                case RendererType._2DRenderer:
-                    return CreateInstance<Experimental.Rendering.Universal.Renderer2DData>();
+                // case RendererType._2DRenderer:
+                //     return CreateInstance<Experimental.Rendering.Universal.Renderer2DData>();
                 // Forward Renderer is the fallback renderer that works on all platforms
                 default:
                     return CreateInstance<ForwardRendererData>();

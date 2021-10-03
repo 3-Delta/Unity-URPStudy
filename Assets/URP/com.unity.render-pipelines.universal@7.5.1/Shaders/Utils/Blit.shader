@@ -21,9 +21,9 @@ Shader "Hidden/Universal Render Pipeline/Blit"
 
             #pragma multi_compile _ _LINEAR_TO_SRGB_CONVERSION
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
             #ifdef _LINEAR_TO_SRGB_CONVERSION
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl"
             #endif
 
             struct Attributes

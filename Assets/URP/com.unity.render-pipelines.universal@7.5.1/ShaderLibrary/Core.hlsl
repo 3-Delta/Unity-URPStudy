@@ -1,10 +1,10 @@
 #ifndef UNIVERSAL_PIPELINE_CORE_INCLUDED
 #define UNIVERSAL_PIPELINE_CORE_INCLUDED
 
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Version.hlsl"
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Packing.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Version.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Input.hlsl"
 
 #if !defined(SHADER_HINT_NICE_QUALITY)
 #if defined(SHADER_API_MOBILE) || defined(SHADER_API_SWITCH)
@@ -270,6 +270,6 @@ float2 UnityStereoTransformScreenSpaceTex(float2 uv)
 
 #endif // defined(UNITY_SINGLE_PASS_STEREO)
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Deprecated.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Deprecated.hlsl"
 
 #endif

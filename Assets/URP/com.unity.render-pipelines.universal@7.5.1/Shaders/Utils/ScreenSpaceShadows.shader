@@ -13,12 +13,12 @@ Shader "Hidden/Universal Render Pipeline/ScreenSpaceShadows"
         #pragma prefer_hlslcc gles
         #pragma exclude_renderers d3d11_9x
         //Keep compiler quiet about Shadows.hlsl.
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/EntityLighting.hlsl"
-        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/ImageBasedLighting.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/EntityLighting.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/ImageBasedLighting.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Shadows.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/DeclareDepthTexture.hlsl"
 
         struct Attributes
         {

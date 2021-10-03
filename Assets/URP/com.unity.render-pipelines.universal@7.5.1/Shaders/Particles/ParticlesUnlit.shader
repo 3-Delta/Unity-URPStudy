@@ -98,8 +98,8 @@ Shader "Universal Render Pipeline/Particles/Unlit"
             #pragma vertex vertParticleUnlit
             #pragma fragment fragParticleUnlit
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlitForwardPass.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/Particles/ParticlesUnlitInput.hlsl"
+            #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/Particles/ParticlesUnlitForwardPass.hlsl"
 
             ENDHLSL
         }
