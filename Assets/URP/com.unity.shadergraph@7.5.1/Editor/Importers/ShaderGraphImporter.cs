@@ -139,11 +139,11 @@ Shader ""Hidden/GraphErrorShader2""
             foreach (var sourceAssetDependencyPath in sourceAssetDependencyPaths.Distinct())
             {
                 // Ensure that dependency path is relative to project
-                if (!sourceAssetDependencyPath.StartsWith("Packages/") && !sourceAssetDependencyPath.StartsWith("Assets/"))
-                {
-                    Debug.LogWarning($"Invalid dependency path: {sourceAssetDependencyPath}", mainObject);
-                    continue;
-                }
+                // if (!sourceAssetDependencyPath.StartsWith("Packages/") && !sourceAssetDependencyPath.StartsWith("Assets/"))
+                // {
+                //     Debug.LogWarning($"Invalid dependency path: {sourceAssetDependencyPath}", mainObject);
+                //     continue;
+                // }
 
                 ctx.DependsOnSourceAsset(sourceAssetDependencyPath);
             }
@@ -294,7 +294,7 @@ Shader ""Hidden/GraphErrorShader2""
             }
 
             sharedCodeIndices.Add(codeSnippets.Count);
-            codeSnippets.Add($"#include \"Packages/com.unity.shadergraph/ShaderGraphLibrary/Functions.hlsl\"{nl}");
+            codeSnippets.Add($"#include \"Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/Functions.hlsl\"{nl}");
 
             for (var registryIndex = 0; registryIndex < registry.names.Count; registryIndex++)
             {

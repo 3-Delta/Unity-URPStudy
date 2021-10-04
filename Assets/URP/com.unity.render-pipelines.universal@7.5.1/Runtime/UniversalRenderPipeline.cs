@@ -509,8 +509,7 @@ namespace UnityEngine.Rendering.Universal
             // 不透明物体不需要cpu从前到后的排序，借助hsr
             bool hasHSRGPU = SystemInfo.hasHiddenSurfaceRemovalOnGPU;
             bool canSkipFrontToBackSorting = (baseCamera.opaqueSortMode == OpaqueSortMode.Default && hasHSRGPU) || baseCamera.opaqueSortMode == OpaqueSortMode.NoDistanceSort;
-
-            // todo defaultOpaqueSortFlags是如何影响排序的？
+            
             cameraData.defaultOpaqueSortFlags = canSkipFrontToBackSorting ? noFrontToBackOpaqueFlags : yesFrontToBackOpaqueFlags;
             #endregion
             

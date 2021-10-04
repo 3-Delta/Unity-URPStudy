@@ -241,9 +241,9 @@ namespace UnityEditor.ShaderGraph
                 finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl""");
                 finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/UnityInstancing.hlsl""");
                 finalShader.AppendLine(@"#include ""Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/EntityLighting.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariables.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl""");
-                finalShader.AppendLine(@"#include ""Packages/com.unity.shadergraph/ShaderGraphLibrary/Functions.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariables.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl""");
+                finalShader.AppendLine(@"#include ""Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/Functions.hlsl""");
 
                 finalShader.AppendLines(shaderKeywordDeclarations.ToString());
                 finalShader.AppendLine(@"#define SHADERGRAPH_PREVIEW 1");

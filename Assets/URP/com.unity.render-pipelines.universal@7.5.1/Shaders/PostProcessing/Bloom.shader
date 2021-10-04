@@ -10,7 +10,7 @@ Shader "Hidden/Universal Render Pipeline/Bloom"
         #pragma multi_compile_local _ _USE_RGBM
 
         #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
-        #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Filtering.hlsl"
+        #include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Filtering.hlsl"
         #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl"
         #include "Assets/URP/com.unity.render-pipelines.universal@7.5.1/Shaders/PostProcessing/Common.hlsl"
 

@@ -115,7 +115,7 @@ namespace UnityEditor.ShaderGraph
         {
             var path = new List<string>
             {
-                DefaultShaderIncludes.GetAssetsPackagePath() ?? Path.GetFullPath("Packages/com.unity.shadergraph"),
+                DefaultShaderIncludes.GetAssetsPackagePath() ?? Path.GetFullPath("Assets/Urp/com.unity.shadergraph@7.5.1"),
                 "Editor",
                 "Templates"
             };

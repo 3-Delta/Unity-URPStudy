@@ -69,6 +69,7 @@ namespace UnityEngine
         public static void RegisterInputs(List<InputManagerEntry> entries)
         {
             // Grab reference to input manager
+            // 查找磁盘资源
             var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset");
             // Temporary fix. This happens some time with HDRP init when it's called before asset database is initialized (probably related to package load order).
             if (assets.Length == 0)

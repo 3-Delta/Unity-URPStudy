@@ -74,7 +74,7 @@ namespace UnityEditor.Rendering.Universal
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Shadows.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
-                "Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
+                "Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
             },
             pragmas = new List<string>()
             {
@@ -131,7 +131,7 @@ namespace UnityEditor.Rendering.Universal
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
-                "Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
+                "Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
             },
             pragmas = new List<string>()
             {
@@ -181,7 +181,7 @@ namespace UnityEditor.Rendering.Universal
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
-                "Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
+                "Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
             },
             pragmas = new List<string>()
             {
@@ -234,7 +234,7 @@ namespace UnityEditor.Rendering.Universal
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/MetaInput.hlsl",
-                "Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
+                "Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
             },
             pragmas = new List<string>()
             {
@@ -277,7 +277,7 @@ namespace UnityEditor.Rendering.Universal
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Core.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/Lighting.hlsl",
                 "Assets/URP/com.unity.render-pipelines.universal@7.5.1/ShaderLibrary/ShaderGraphFunctions.hlsl",
-                "Packages/com.unity.shadergraph/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
+                "Assets/Urp/com.unity.shadergraph@7.5.1/ShaderGraphLibrary/ShaderVariablesFunctions.hlsl"
             },
             pragmas = new List<string>()
             {
