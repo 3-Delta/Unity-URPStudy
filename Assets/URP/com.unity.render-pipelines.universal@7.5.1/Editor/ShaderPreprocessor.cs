@@ -21,6 +21,8 @@ namespace UnityEditor.Rendering.Universal
         MixedLighting = (1 << 6),
         TerrainHoles = (1 << 7)
     }
+    
+    // shader过滤
     internal class ShaderPreprocessor : IPreprocessShaders
     {
         ShaderKeyword m_MainLightShadows = new ShaderKeyword(ShaderKeywordStrings.MainLightShadows);
