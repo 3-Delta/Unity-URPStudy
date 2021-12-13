@@ -175,11 +175,13 @@ namespace UnityEngine.Rendering.Universal
             get => m_CameraDepthTarget;
         }
 
+        // 构造函数中创建
         protected List<ScriptableRendererFeature> rendererFeatures
         {
             get => m_RendererFeatures;
         }
-
+        
+        // 执行的时候，pass逐步insert
         protected List<ScriptableRenderPass> activeRenderPassQueue
         {
             get => m_ActiveRenderPassQueue;
@@ -382,49 +384,43 @@ namespace UnityEngine.Rendering.Universal
 
            for (int eyeIndex = 0; eyeIndex < renderingData.cameraData.numberOfXRPasses; ++eyeIndex)
            {
-            // This is still required because of the following reasons:
-            // - XR Camera Matrices. This condition should be lifted when Pure XR SDK lands.
-            // - Camera billboard properties.
-            // - Camera frustum planes: unity_CameraWorldClipPlanes[6]
-            // - _ProjectionParams.x logic is deep inside GfxDevice
-            // NOTE: The only reason we have to call this here and not at the beginning (before shadows)
-            // is because this need to be called for each eye in multi pass VR.
-            // The side effect is that this will override some shader properties we already setup and we will have to
-            // reset them.
-            context.SetupCameraProperties(camera, stereoEnabled, eyeIndex);
-            SetCameraMatrices(cmd, ref cameraData, true);
+                // This is still required because of the following reasons:
+                // - XR Camera Matrices. This condition should be lifted when Pure XR SDK lands.
+                // - Camera billboard properties.
+                // - Camera frustum planes: unity_CameraWorldClipPlanes[6]
+                // - _ProjectionParams.x logic is deep inside GfxDevice
+                // NOTE: The only reason we have to call this here and not at the beginning (before shadows)
+                // is because this need to be called for each eye in multi pass VR.
+                // The side effect is that this will override some shader properties we already setup and we will have to
+                // reset them.
+                context.SetupCameraProperties(camera, stereoEnabled, eyeIndex);
+                SetCameraMatrices(cmd, ref cameraData, true);
 
-            // Reset shader time variables as they were overridden in SetupCameraProperties. If we don't do it we might have a mismatch between shadows and main rendering
-            SetShaderTimeValues(cmd, time, deltaTime, smoothDeltaTime);
+                // Reset shader time variables as they were overridden in SetupCameraProperties. If we don't do it we might have a mismatch between shadows and main rendering
+                SetShaderTimeValues(cmd, time, deltaTime, smoothDeltaTime);
 
-#if VISUAL_EFFECT_GRAPH_0_0_1_OR_NEWER
-            //Triggers dispatch per camera, all global parameters should have been setup at this stage.
-            VFX.VFXManager.ProcessCameraCommand(camera, cmd);
-#endif
+    #if VISUAL_EFFECT_GRAPH_0_0_1_OR_NEWER
+                //Triggers dispatch per camera, all global parameters should have been setup at this stage.
+                VFX.VFXManager.ProcessCameraCommand(camera, cmd);
+    #endif
 
-            context.ExecuteCommandBuffer(cmd);
-            cmd.Clear();
+                context.ExecuteCommandBuffer(cmd);
+                cmd.Clear();
+                
+                // In the opaque and transparent blocks the main rendering executes.
 
-            if (stereoEnabled)
-                BeginXRRendering(context, camera, eyeIndex);
+                // Opaque blocks...
+                ExecuteBlock(RenderPassBlock.MainRenderingOpaque, blockRanges, context, ref renderingData, eyeIndex);
 
-            // In the opaque and transparent blocks the main rendering executes.
+                // Transparent blocks...
+                ExecuteBlock(RenderPassBlock.MainRenderingTransparent, blockRanges, context, ref renderingData, eyeIndex);
 
-            // Opaque blocks...
-            ExecuteBlock(RenderPassBlock.MainRenderingOpaque, blockRanges, context, ref renderingData, eyeIndex);
+                // Draw Gizmos...
+                DrawGizmos(context, camera, GizmoSubset.PreImageEffects);
 
-            // Transparent blocks...
-            ExecuteBlock(RenderPassBlock.MainRenderingTransparent, blockRanges, context, ref renderingData, eyeIndex);
-
-            // Draw Gizmos...
-            DrawGizmos(context, camera, GizmoSubset.PreImageEffects);
-
-            // In this block after rendering drawing happens, e.g, post processing, video player capture.
-            ExecuteBlock(RenderPassBlock.AfterRendering, blockRanges, context, ref renderingData, eyeIndex);
-
-            if (stereoEnabled)
-                EndXRRendering(context, renderingData, eyeIndex);
-            }
+                // In this block after rendering drawing happens, e.g, post processing, video player capture.
+                ExecuteBlock(RenderPassBlock.AfterRendering, blockRanges, context, ref renderingData, eyeIndex);
+           }
 
             DrawGizmos(context, camera, GizmoSubset.PostImageEffects);
 
@@ -435,6 +431,7 @@ namespace UnityEngine.Rendering.Universal
 
         /// <summary>
         /// Enqueues a render pass for execution.
+        /// 一般是renderPass调用
         /// </summary>
         /// <param name="pass">Render pass to be enqueued.</param>
         public void EnqueuePass(ScriptableRenderPass pass)
@@ -503,6 +500,8 @@ namespace UnityEngine.Rendering.Universal
             cmd.DisableShaderKeyword(ShaderKeywordStrings.AdditionalLightShadows);
             cmd.DisableShaderKeyword(ShaderKeywordStrings.SoftShadows);
             cmd.DisableShaderKeyword(ShaderKeywordStrings.MixedLightingSubtractive);
+            
+            // 设置 gamma转换
             cmd.DisableShaderKeyword(ShaderKeywordStrings.LinearToSRGBConversion);
         }
 
@@ -750,23 +749,7 @@ namespace UnityEngine.Rendering.Universal
                     SetRenderTarget(cmd, passColorAttachment, passDepthAttachment, finalClearFlag, finalClearColor);
             }
         }
-
-        void BeginXRRendering(ScriptableRenderContext context, Camera camera, int eyeIndex)
-        {
-            context.StartMultiEye(camera, eyeIndex);
-            m_InsideStereoRenderBlock = true;
-            m_XRRenderTargetNeedsClear = true;
-        }
-
-        void EndXRRendering(ScriptableRenderContext context, in RenderingData renderingData, int eyeIndex)
-        {
-            Camera camera = renderingData.cameraData.camera;
-            context.StopMultiEye(camera);
-            bool isLastPass = renderingData.cameraData.resolveFinalTarget && (eyeIndex == renderingData.cameraData.numberOfXRPasses - 1);
-            context.StereoEndRender(camera, eyeIndex, isLastPass);
-            m_InsideStereoRenderBlock = false;
-        }
-
+        
         internal static void SetRenderTarget(CommandBuffer cmd, RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment, ClearFlag clearFlag, Color clearColor)
         {
             m_ActiveColorAttachments[0] = colorAttachment;

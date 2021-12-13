@@ -40,6 +40,8 @@ namespace UnityEngine.Rendering.Universal
         public int additionalLightsCount;
         public int maxPerObjectAdditionalLightsCount;
         public NativeArray<VisibleLight> visibleLights;
+        
+        // 默认perpixel处理，这里判断最终是perpixel还是pervertex
         public bool shadeAdditionalLightsPerVertex;
         public bool supportsMixedLighting;
     }
@@ -230,8 +232,6 @@ namespace UnityEngine.Rendering.Universal
         public static readonly string DepthMsaa8 = "_DEPTH_MSAA_8";
 
         public static readonly string LinearToSRGBConversion = "_LINEAR_TO_SRGB_CONVERSION";
-        [Obsolete("The _KILL_ALPHA shader keyword is deprecated in the Universal Render Pipeline.")]
-        public static readonly string KillAlpha = "_KILL_ALPHA";
 
         public static readonly string SmaaLow = "_SMAA_PRESET_LOW";
         public static readonly string SmaaMedium = "_SMAA_PRESET_MEDIUM";

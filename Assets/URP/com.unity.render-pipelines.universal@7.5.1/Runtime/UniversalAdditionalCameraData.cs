@@ -64,10 +64,6 @@ namespace UnityEngine.Rendering.Universal
     {
         Screen,
         Texture,
-
-        [Obsolete("Use CameraOutput.Screen instead.", false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        Camera = Screen,
     }
 
     /// <summary>
@@ -209,40 +205,6 @@ namespace UnityEngine.Rendering.Universal
             get => m_CameraType;
             set => m_CameraType = value;
         }
-
-        #region deprecated
-        /// <summary>
-        /// Returns the camera output type. Only valid for Base cameras.
-        /// <see cref="CameraOutput"/>.
-        /// <seealso cref="CameraRenderType"/>.
-        /// <seealso cref="Camera"/>
-        /// </summary>
-        [Obsolete("CameraOutput has been deprecated. Use Camera.targetTexture instead.")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public CameraOutput cameraOutput
-        {
-            get
-            {
-                gameObject.TryGetComponent<Camera>(out var camera);
-                if (camera?.targetTexture == null)
-                    return CameraOutput.Screen;
-
-                return CameraOutput.Texture;
-            }
-            set { }
-        }
-
-        [Obsolete("AddCamera has been deprecated. You can add cameras to the stack by calling <c>cameraStack</c> property and modifying the camera stack list.")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void AddCamera(Camera camera)
-        {
-            m_Cameras.Add(camera);
-        }
-
-        [Obsolete("cameras property has been deprecated. Use cameraStack property instead.")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public List<Camera> cameras => cameraStack;
-        #endregion
 
         /// <summary>
         /// Returns the camera stack. Only valid for Base cameras.
