@@ -6,6 +6,9 @@ namespace UnityEngine.Rendering.Universal
 
     internal class TransparentSettingsPass : ScriptableRenderPass
     {
+        // 半透明物体是否接受阴影
+        // 其实是通过在renderevent渲染半透明物体之前，传送这个bool
+        // 关键的是：renderevent必须控制在RenderPassEvent.BeforeRenderingTransparents
         bool m_shouldReceiveShadows;
 
         const string m_ProfilerTag = "Transparent Settings Pass";
