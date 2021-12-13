@@ -547,7 +547,7 @@ half3 VertexLighting(float3 positionWS, half3 normalWS)
 {
     half3 vertexLightColor = half3(0.0, 0.0, 0.0);
 
-#ifdef _ADDITIONAL_LIGHTS_VERTEX
+#ifdef _ADDITIONAL_LIGHTS_VERTEX  // pervertex光照
     uint lightsCount = GetAdditionalLightsCount();
     for (uint lightIndex = 0u; lightIndex < lightsCount; ++lightIndex)
     {
@@ -576,7 +576,7 @@ half4 UniversalFragmentPBR(InputData inputData, half3 albedo, half metallic, hal
     half3 color = GlobalIllumination(brdfData, inputData.bakedGI, occlusion, inputData.normalWS, inputData.viewDirectionWS);
     color += LightingPhysicallyBased(brdfData, mainLight, inputData.normalWS, inputData.viewDirectionWS);
 
-#ifdef _ADDITIONAL_LIGHTS
+#ifdef _ADDITIONAL_LIGHTS // perpixel光照
     uint pixelLightCount = GetAdditionalLightsCount();
     for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
     {
