@@ -506,7 +506,7 @@ namespace UnityEngine.Rendering.Universal
             // 少个了QuantizedFrontToBack， 也就是从前到后的cpu物体排序， 最终按照hsr处理
             SortingCriteria noFrontToBackOpaqueFlags = SortingCriteria.SortingLayer | SortingCriteria.RenderQueue | SortingCriteria.OptimizeStateChanges | SortingCriteria.CanvasOrder;
             
-            // 不透明物体不需要cpu从前到后的排序，借助hsr
+            // 不透明物体不需要cpu从前到后的排序，借助hsr 
             bool hasHSRGPU = SystemInfo.hasHiddenSurfaceRemovalOnGPU;
             bool canSkipFrontToBackSorting = (baseCamera.opaqueSortMode == OpaqueSortMode.Default && hasHSRGPU) || baseCamera.opaqueSortMode == OpaqueSortMode.NoDistanceSort;
             
@@ -724,6 +724,7 @@ namespace UnityEngine.Rendering.Universal
             shadowData.supportsAdditionalLightShadows = SystemInfo.supportsShadows && settings.supportsAdditionalLightShadows && additionalLightsCastShadows;
             shadowData.additionalLightsShadowmapWidth = shadowData.additionalLightsShadowmapHeight = settings.additionalLightsShadowmapResolution;
             shadowData.supportsSoftShadows = settings.supportsSoftShadows && (shadowData.supportsMainLightShadows || shadowData.supportsAdditionalLightShadows);
+            // shadowmap是bit16
             shadowData.shadowmapDepthBufferBits = 16;
         }
 
@@ -748,6 +749,7 @@ namespace UnityEngine.Rendering.Universal
                 lightData.additionalLightsCount =
                     Math.Min((mainLightIndex != -1) ? visibleLights.Length - 1 : visibleLights.Length,
                         maxVisibleAdditionalLights);
+                // 逐对象光源个数受到：非主光源数量限制
                 lightData.maxPerObjectAdditionalLightsCount = Math.Min(settings.maxAdditionalLightsCount, maxPerObjectAdditionalLights);
             }
             else
@@ -781,6 +783,7 @@ namespace UnityEngine.Rendering.Universal
         {
             int totalVisibleLights = visibleLights.Length;
 
+            // todo 如果mainlight不是perpixel, 不处理？
             if (totalVisibleLights == 0 || settings.mainLightRenderingMode != LightRenderingMode.PerPixel)
                 return -1;
 
