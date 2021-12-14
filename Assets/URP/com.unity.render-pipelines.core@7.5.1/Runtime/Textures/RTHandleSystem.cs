@@ -195,6 +195,8 @@ namespace UnityEngine.Rendering
                         // Free the previous version
                         renderTexture.Release();
 
+                        // https://docs.unity3d.com/cn/current/Manual/DynamicResolution.html
+                        // rt是否收到动态分辨率影响，再此控制
                         renderTexture.useDynamicScale = m_HardwareDynamicResRequested && rth.m_EnableHWDynamicScale;
 
                         // Create the render texture

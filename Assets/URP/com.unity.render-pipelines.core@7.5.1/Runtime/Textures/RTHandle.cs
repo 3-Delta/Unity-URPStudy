@@ -11,8 +11,11 @@ namespace UnityEngine.Rendering
     public class RTHandle
     {
         internal RTHandleSystem             m_Owner;
+        
+        // rt和t应该是同时只能一个有效
         internal RenderTexture              m_RT;
         internal Texture                    m_ExternalTexture;
+        
         internal RenderTargetIdentifier     m_NameID;
         internal bool                       m_EnableMSAA = false;
         internal bool                       m_EnableRandomWrite = false;
