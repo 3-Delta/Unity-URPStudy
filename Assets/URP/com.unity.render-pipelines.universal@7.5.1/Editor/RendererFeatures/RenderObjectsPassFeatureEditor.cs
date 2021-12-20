@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace UnityEditor.Experimental.Rendering.Universal
 {
-	[CustomPropertyDrawer(typeof(RenderObjects.RenderObjectsSettings), true)]
+	[CustomPropertyDrawer(typeof(RenderObjectsFeature.RenderObjectsSettings), true)]
     internal class RenderObjectsPassFeatureEditor : PropertyDrawer
     {
 	    internal class Styles
@@ -19,8 +19,8 @@ namespace UnityEditor.Experimental.Rendering.Universal
 		    public static GUIContent renderHeader = new GUIContent("Overrides", "Different parts of the rendering that you can choose to override.");
 
 		    //Filters
-		    public static GUIContent renderQueueFilter = new GUIContent("Queue", "Only render objects in the selected render queue range.");
-		    public static GUIContent layerMask = new GUIContent("Layer Mask", "Only render objects in a layer that match the given layer mask.");
+		    public static GUIContent renderQueueFilter = new GUIContent("Queue [影响DrawSettings]", "Only render objects in the selected render queue range.");
+		    public static GUIContent layerMask = new GUIContent("Layer Mask [影响FilterSettings]", "Only render objects in a layer that match the given layer mask.");
 		    public static GUIContent shaderPassFilter = new GUIContent("LightMode Tags", "Controls which shader passes to render by filtering by LightMode tag.");
 
 		    //Render Options

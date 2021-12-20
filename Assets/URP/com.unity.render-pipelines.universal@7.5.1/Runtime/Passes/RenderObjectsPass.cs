@@ -9,7 +9,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
     {
         RenderQueueType renderQueueType;
         FilteringSettings m_FilteringSettings;
-        RenderObjects.CustomCameraSettings m_CameraSettings;
+        RenderObjectsFeature.CustomCameraSettings m_CameraSettings;
         string m_ProfilerTag;
         ProfilingSampler m_ProfilingSampler;
 
@@ -40,7 +40,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
 
         RenderStateBlock m_RenderStateBlock;
 
-        public RenderObjectsPass(string profilerTag, RenderPassEvent renderPassEvent, string[] shaderTags, RenderQueueType renderQueueType, int layerMask, RenderObjects.CustomCameraSettings cameraSettings)
+        public RenderObjectsPass(string profilerTag, RenderPassEvent renderPassEvent, string[] shaderTags, RenderQueueType renderQueueType, int layerMask, RenderObjectsFeature.CustomCameraSettings cameraSettings)
         {
             m_ProfilerTag = profilerTag;
             m_ProfilingSampler = new ProfilingSampler(profilerTag);

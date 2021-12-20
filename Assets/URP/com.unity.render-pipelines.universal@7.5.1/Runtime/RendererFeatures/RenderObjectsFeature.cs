@@ -12,7 +12,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
     }
 
     [ExcludeFromPreset]
-    public class RenderObjects : ScriptableRendererFeature
+    public class RenderObjectsFeature : ScriptableRendererFeature
     {
         [System.Serializable]
         public class RenderObjectsSettings
