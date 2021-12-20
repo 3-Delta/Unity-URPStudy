@@ -249,6 +249,7 @@ namespace UnityEngine.Rendering.Universal
         {
             get
             {
+                // 会影响asset的相关depth以及opaque的设置
                 if (m_RequiresDepthTextureOption == CameraOverrideOption.UsePipelineSettings)
                 {
                     return UniversalRenderPipeline.asset.supportsCameraDepthTexture;
