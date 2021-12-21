@@ -225,7 +225,10 @@ namespace UnityEngine.Rendering.Universal
                     ApplyAdaptivePerformance(ref renderingData);
 #endif
 
+                // 组织passqueue
                 renderer.Setup(context, ref renderingData);
+                
+                // 执行passqueue
                 renderer.Execute(context, ref renderingData);
             }
 
