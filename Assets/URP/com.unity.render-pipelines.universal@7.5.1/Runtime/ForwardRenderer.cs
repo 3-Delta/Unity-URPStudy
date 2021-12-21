@@ -74,6 +74,10 @@ namespace UnityEngine.Rendering.Universal
             // we inject the builtin passes in the before events.
             m_MainLightShadowCasterPass = new MainLightShadowCasterPass(RenderPassEvent.BeforeRenderingShadows);
             m_AdditionalLightsShadowCasterPass = new AdditionalLightsShadowCasterPass(RenderPassEvent.BeforeRenderingShadows);
+            // depthprepass其实就是在某个时刻，这里是BeforeRenderingPrepasses， 将所有不透明物体RenderQueueRange.opaque重新渲染一次
+            // 底层调用的是：context.DrawRenderers
+            // 后面渲染---不透明物体的时候m_RenderOpaqueForwardPass,其实也是重新将不透明物体渲染了一次，底层也是DrawRenderers实现的
+            // 只不过一个目标是depth，一个是color
             m_DepthPrepass = new DepthOnlyPass(RenderPassEvent.BeforeRenderingPrepasses, RenderQueueRange.opaque, data.opaqueLayerMask);
             m_ColorGradingLutPass = new ColorGradingLutPass(RenderPassEvent.BeforeRenderingPrepasses, data.postProcessData);
             m_RenderOpaqueForwardPass = new DrawObjectsPass("Render Opaques", true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
@@ -193,6 +197,7 @@ namespace UnityEngine.Rendering.Universal
             // Depth prepass is generated in the following cases:
             // - If game or offscreen camera requires it we check if we can copy the depth from the rendering opaques pass and use that instead.
             // - Scene or preview cameras always require a depth texture. We do a depth pre-pass to simplify it and it shouldn't matter much for editor.
+            // 需要depth(其实就是camera上需要depth)同时不能copydepth的时候，就需要prepassdepth
             bool requiresDepthPrepass = requiresDepthTexture && !CanCopyDepth(ref renderingData.cameraData);
             requiresDepthPrepass |= isSceneViewCamera;
             requiresDepthPrepass |= isPreviewCamera;
@@ -570,6 +575,9 @@ namespace UnityEngine.Rendering.Universal
                    (Display.main.requiresBlitToBackbuffer && !isStereoEnabled);
         }
 
+        // 大概理解 msaa对于depth的影响了，因为msaa会在锯齿周边进行多采样点采样，这样就会导致一些地方的depth偏离原始的depth的情况
+        // 所以camera有msaa，那么就必须prepass
+        // depthprepass和copydepth在开启depth的时候，必然二选一
         bool CanCopyDepth(ref CameraData cameraData)
         {
             bool msaaEnabledForCamera = cameraData.cameraTargetDescriptor.msaaSamples > 1;
