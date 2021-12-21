@@ -108,6 +108,8 @@ namespace UnityEngine.Rendering.Universal.Internal
             Vector4 scaleBias = (flipSign < 0.0f) ? new Vector4(flipSign, 1.0f, -1.0f, 1.0f) : new Vector4(flipSign, 0.0f, 1.0f, 1.0f);
             cmd.SetGlobalVector(m_ScaleBiasId, scaleBias);
 
+            // catlikecoding是用一个大的三角形绘制的https://github.com/3-Delta/Unity-CignalRP/blob/main/Assets/Runtime/CameraRenderer.cs
+            // DrawCopy
             cmd.DrawMesh(RenderingUtils.fullscreenMesh, Matrix4x4.identity, m_CopyDepthMaterial);
 
             context.ExecuteCommandBuffer(cmd);
