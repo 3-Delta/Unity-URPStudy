@@ -102,8 +102,10 @@ namespace UnityEngine.Rendering.Universal
         public CameraType cameraType;
         public bool isDefaultViewport;
         public bool isHdrEnabled;
-        public bool requiresDepthTexture;
-        public bool requiresOpaqueTexture;
+        
+        public bool requiresDepthTexture; // 影响到copydepth
+        public bool requiresOpaqueTexture; // 影响到copycolor
+        // 最终受到camera的depth和opaque的设置影响
 
         /// <summary>
         /// True if the camera rendering is for the scene window in the editor

@@ -130,6 +130,7 @@ namespace UnityEngine.Rendering.Universal
     public class UniversalRenderPipelineAsset : RenderPipelineAsset, ISerializationCallbackReceiver
     {
         Shader m_DefaultShader;
+        // m_RendererDataListc创建给m_Renderers
         ScriptableRenderer[] m_Renderers = new ScriptableRenderer[1];
 
         // Default values set when a new UniversalRenderPipeline asset is created
@@ -398,11 +399,13 @@ namespace UnityEngine.Rendering.Universal
 
         /// <summary>
         /// Returns the default renderer being used by this pipeline.
+        /// 默认的ScriptableRenderer
         /// </summary>
         public ScriptableRenderer scriptableRenderer
         {
-            get
-            {
+            get {
+                // GraphicsSettings.currentRenderPipeline;其实就是qualitysetting的
+                // GraphicsSettings.defaultRenderPipeline;其实就是graphicsetting的
                 if (m_RendererDataList?.Length > m_DefaultRendererIndex && m_RendererDataList[m_DefaultRendererIndex] == null)
                 {
                     Debug.LogError("Default renderer is missing from the current Pipeline Asset.", this);
