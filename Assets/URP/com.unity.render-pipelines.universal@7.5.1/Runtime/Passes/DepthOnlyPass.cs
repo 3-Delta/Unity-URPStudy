@@ -72,6 +72,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                     context.StartMultiEye(camera, eyeIndex);
                 }
 
+                // depthonlypass其实就是绘制depth，不是通过copyattachment, 而是通过重新context.DrawRenderers实现
                 context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref m_FilteringSettings);
 
             }
