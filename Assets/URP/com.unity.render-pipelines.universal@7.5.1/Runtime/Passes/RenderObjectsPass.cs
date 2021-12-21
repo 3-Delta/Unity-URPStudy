@@ -33,6 +33,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
             stencilState.SetFailOperation(failOp);
             stencilState.SetZFailOperation(zFailOp);
 
+            // 分别指定stencil和depth的override
             m_RenderStateBlock.mask |= RenderStateMask.Stencil;
             m_RenderStateBlock.stencilReference = reference;
             m_RenderStateBlock.stencilState = stencilState;
