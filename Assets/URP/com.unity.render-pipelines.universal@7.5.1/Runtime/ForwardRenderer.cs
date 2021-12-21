@@ -577,7 +577,7 @@ namespace UnityEngine.Rendering.Universal
 
         // 大概理解 msaa对于depth的影响了，因为msaa会在锯齿周边进行多采样点采样，这样就会导致一些地方的depth偏离原始的depth的情况
         // 所以camera有msaa，那么就必须prepass
-        // depthprepass和copydepth在开启depth的时候，必然二选一
+        // depthprepass和copydepth在开启depth的时候，必然二选一 
         bool CanCopyDepth(ref CameraData cameraData)
         {
             bool msaaEnabledForCamera = cameraData.cameraTargetDescriptor.msaaSamples > 1;
