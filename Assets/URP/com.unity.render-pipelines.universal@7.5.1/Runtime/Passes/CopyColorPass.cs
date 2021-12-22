@@ -46,6 +46,9 @@ namespace UnityEngine.Rendering.Universal.Internal
         {
             RenderTextureDescriptor descriptor = cameraTextureDescripor;
             descriptor.msaaSamples = 1;
+            // https://www.zhihu.com/question/507603172/answer/2280962218
+            // rt有时候不需要depth和stencil, 只需要color，这里就不需要depth,所以设置0
+            // descriptor中可以设置stencil的format为none, 也就是不需要stencil
             descriptor.depthBufferBits = 0;
             if (m_DownsamplingMethod == Downsampling._2xBilinear)
             {
