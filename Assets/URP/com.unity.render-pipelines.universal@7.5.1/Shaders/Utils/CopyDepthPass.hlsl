@@ -100,7 +100,8 @@ float SampleDepth(float2 uv)
 #endif
 }
 
-float frag(Varyings input) : SV_Depth
+// https://github.com/3-Delta/Unity-CignalRP/blob/main/Assets/ShaderLibrary/Light/ShadowCaster.hlsl
+float frag(Varyings input) : SV_Depth // depth标记
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
     UNITY_SETUP_INSTANCE_ID(input);
