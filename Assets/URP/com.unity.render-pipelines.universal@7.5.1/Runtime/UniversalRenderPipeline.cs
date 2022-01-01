@@ -199,6 +199,7 @@ namespace UnityEngine.Rendering.Universal
             ScriptableRenderer.current = renderer;
             bool isSceneViewCamera = cameraData.isSceneViewCamera;
 
+            // 开启debugLevel才会在framedebugger中显示未多相机的层次渲染结构，否则都被收归在“Render Camera”中
             ProfilingSampler sampler = (asset.debugLevel >= PipelineDebugLevel.Profiling) ? new ProfilingSampler(camera.name): _CameraProfilingSampler;
             CommandBuffer cmd = CommandBufferPool.Get(sampler.name);
             using (new ProfilingScope(cmd, sampler))
@@ -328,6 +329,7 @@ namespace UnityEngine.Rendering.Universal
             if (!isStackedRendering)
                 return;
 
+            // 处理baseCamera的所有overlayCamera
             for (int i = 0; i < cameraStack.Count; ++i)
             {
                 var currCamera = cameraStack[i];
