@@ -72,6 +72,9 @@ namespace UnityEngine.Rendering.Universal
 
             // Note: Since all custom render passes inject first and we have stable sort,
             // we inject the builtin passes in the before events.
+            
+            // 总结：先入队自定义feature的pass, 然后入队urp默认的pass, 然后执行的时候，进行稳定的插入排序，不会打乱相同event的先后顺序 
+            // 而且基本上除了copydepth, copycolor是after，其他默认的pass都是before类型的
             m_MainLightShadowCasterPass = new MainLightShadowCasterPass(RenderPassEvent.BeforeRenderingShadows);
             m_AdditionalLightsShadowCasterPass = new AdditionalLightsShadowCasterPass(RenderPassEvent.BeforeRenderingShadows);
             // depthprepass其实就是在某个时刻，这里是BeforeRenderingPrepasses， 将所有不透明物体RenderQueueRange.opaque重新渲染一次
