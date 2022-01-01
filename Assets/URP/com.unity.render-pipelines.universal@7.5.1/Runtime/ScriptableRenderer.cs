@@ -869,7 +869,7 @@ namespace UnityEngine.Rendering.Universal
             CommandBufferPool.Release(cmd);
         }
 
-        // 插入排序
+        // 插入排序, 是一种稳定排序，所以相同event的ScriptableRenderPass会保持原始enter顺序
         internal static void SortStable(List<ScriptableRenderPass> list)
         {
             for (int i = 1; i < list.Count; ++i)
