@@ -55,7 +55,7 @@ namespace UnityEngine.Rendering.Universal
 
         public ShaderResources shaders = null;
 
-        // https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.8/manual/renderer-features/how-to-custom-effect-render-objects.html
+        //https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.8/manual/renderer-features/how-to-custom-effect-render-objects.html
         // forwardrenderer的OpaqueLayerMask只影响了depthprepass和drawopaque, 而且drawopaque的event是RenderPassEvent.BeforeRenderingOpaques
         // 也就意味着，其实DrawObjectsPass的绘制不透明物体event是afteropaque其实总是在beforeopaque之后，forwardrenderer的OpaqueLayerMask其实是针对不透明物体的默认渲染设置
         [SerializeField] LayerMask m_OpaqueLayerMask = -1;
