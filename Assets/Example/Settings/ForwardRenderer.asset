@@ -17,7 +17,7 @@ MonoBehaviour:
     planeNormalWS: {x: 0, y: 0, z: 1}
     shadowMat: {fileID: 2100000, guid: 7bbb74332406aec439bccc871a587b5b, type: 2}
     stencilSettings:
-      overrideStencilState: 1
+      overrideStencilState: 0
       stencilReference: 0
       stencilCompareFunction: 3
       passOperation: 6
@@ -48,7 +48,7 @@ MonoBehaviour:
     fallbackErrorPS: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 23
+    m_Bits: 279
   m_TransparentLayerMask:
     serializedVersion: 2
     m_Bits: 32

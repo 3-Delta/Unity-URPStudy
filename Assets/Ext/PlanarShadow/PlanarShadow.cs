@@ -6,48 +6,66 @@ using UnityEngine.Rendering.Universal;
 
 // https://zhuanlan.zhihu.com/p/266174847
 // https://zhuanlan.zhihu.com/p/31504088
-public class PlanarShadow : ScriptableRendererFeature
-{
+// https://github.com/czy-moyu/PlanarShadow-URP
+public class PlanarShadow : ScriptableRendererFeature {
     [Serializable]
     public class PlanarShadowSettings {
         public Vector3 planeNormalWS = Vector3.forward;
         public Material shadowMat;
         public StencilStateData stencilSettings = new StencilStateData();
     }
-    
+
     class PlanarShadowRenderPass : ScriptableRenderPass {
-        public PlanarShadowRenderPass() {
-        }
+        private ProfilingSampler profilingSampler;
+        private Material shadowMat;
+        private RenderStateBlock m_RenderStateBlock;
 
-        // This method is called before executing the render pass.
-        // It can be used to configure render targets and their clear state. Also to create temporary render target textures.
-        // When empty this render pass will render to the active camera render target.
-        // You should never call CommandBuffer.SetRenderTarget. Instead call <c>ConfigureTarget</c> and <c>ConfigureClear</c>.
-        // The render pipeline will ensure target setup and clearing happens in an performance manner.
-        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+        public void SetStencilState(int reference, CompareFunction compareFunction, StencilOp passOp, StencilOp failOp, StencilOp zFailOp)
         {
-        }
+            StencilState stencilState = StencilState.defaultValue;
+            stencilState.enabled = true;
+            stencilState.SetCompareFunction(compareFunction);
+            stencilState.SetPassOperation(passOp);
+            stencilState.SetFailOperation(failOp);
+            stencilState.SetZFailOperation(zFailOp);
 
-        // Here you can implement the rendering logic.
-        // Use <c>ScriptableRenderContext</c> to issue drawing commands or execute command buffers
-        // https://docs.unity3d.com/ScriptReference/Rendering.ScriptableRenderContext.html
-        // You don't have to call ScriptableRenderContext.submit, the render pipeline will call it at specific points in the pipeline.
-        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-        {
+            // 分别指定stencil和depth的override
+            m_RenderStateBlock.mask |= RenderStateMask.Stencil;
+            m_RenderStateBlock.stencilReference = reference;
+            m_RenderStateBlock.stencilState = stencilState;
         }
+        
+        public PlanarShadowRenderPass(Material shadowMat) {
+            this.profilingSampler = new ProfilingSampler("PlanarShadow");
+            this.shadowMat = shadowMat;
+        }
+        
+        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
+            CommandBuffer cmdBuffer = CommandBufferPool.Get(profilingSampler.name);
+            using (new ProfilingScope(cmdBuffer, profilingSampler)) {
+                cmdBuffer.Blit(null, BuiltinRenderTextureType.CurrentActive, shadowMat);
+            }
 
-        /// Cleanup any allocated resources that were created during the execution of this render pass.
-        public override void FrameCleanup(CommandBuffer cmd)
-        {
+            context.ExecuteCommandBuffer(cmdBuffer);
+            cmdBuffer.Clear();
+            CommandBufferPool.Release(cmdBuffer);
         }
     }
-    
-    public PlanarShadowSettings setting = new PlanarShadowSettings();
+
+    public PlanarShadowSettings settings = new PlanarShadowSettings();
     private PlanarShadowRenderPass scriptablePass;
 
-    public override void Create()
-    {
-        scriptablePass = new PlanarShadowRenderPass();
+    public override void Create() {
+        scriptablePass = new PlanarShadowRenderPass(settings.shadowMat);
+        
+        if (settings.stencilSettings.overrideStencilState)
+        {
+            scriptablePass.SetStencilState(settings.stencilSettings.stencilReference,
+                settings.stencilSettings.stencilCompareFunction, settings.stencilSettings.passOperation,
+                settings.stencilSettings.failOperation, settings.stencilSettings.zFailOperation);
+            
+        }
+        
 
         // Configures where the render pass should be injected.
         scriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
@@ -55,10 +73,7 @@ public class PlanarShadow : ScriptableRendererFeature
 
     // Here you can inject one or multiple render passes in the renderer.
     // This method is called when setting up the renderer once per-camera.
-    public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
-    {
+    public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData) {
         renderer.EnqueuePass(scriptablePass);
     }
 }
-
-

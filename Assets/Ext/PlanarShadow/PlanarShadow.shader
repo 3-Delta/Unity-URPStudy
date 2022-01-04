@@ -16,16 +16,18 @@
         LOD 100
         
         // 物体自身着色使用URP自带的ForwardLit pass
-        USEPASS "Universal Render Pipeline/Lit/ForwardLit"
+        // USEPASS "Universal Render Pipeline/Lit/ForwardLit"
 
         Pass
         {
             Name "PlanarShadow"
-
+            Tags{ "LightMode"="UniversialForward"}
+            
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
             Cull Off
             //深度稍微偏移防止阴影与地面穿插
+            // 其实就是depthbias, 只针对当前mesh(renderstateblock.rasterstate), 和全局影响（cmdbuffer.setglobaldepthbias）
             Offset -1 , 0
 
             HLSLPROGRAM
