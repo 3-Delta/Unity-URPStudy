@@ -3,9 +3,9 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 // https://answer.uwa4d.com/question/5f20e9972a9f497246652475
-public class ShaderReplacement : ScriptableRendererFeature
+public class ShaderReplacementFeature : ScriptableRendererFeature
 {
-    class CustomRenderPass : ScriptableRenderPass {
+    class ShaderReplacementPass : ScriptableRenderPass {
         private readonly ShaderTagId replaceTagId = new ShaderTagId("ShaderReplacement");
         public LayerMask layerMask = -1;
         
@@ -38,11 +38,11 @@ public class ShaderReplacement : ScriptableRendererFeature
         }
     }
 
-    CustomRenderPass m_ScriptablePass;
+    ShaderReplacementPass m_ScriptablePass;
 
     public override void Create()
     {
-        m_ScriptablePass = new CustomRenderPass();
+        m_ScriptablePass = new ShaderReplacementPass();
 
         // Configures where the render pass should be injected.
         m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
