@@ -50,6 +50,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
         }
 
         // 渲染某物体的时候，修改camera的fov, 比如fps游戏的枪械
+        // https://blog.uwa4d.com/archives/TechSharing_189.html
         [System.Serializable]
         public class CustomCameraSettings
         {
