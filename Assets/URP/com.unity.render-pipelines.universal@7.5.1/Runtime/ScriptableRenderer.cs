@@ -212,10 +212,7 @@ namespace UnityEngine.Rendering.Universal
 
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
         List<ScriptableRendererFeature> m_RendererFeatures = new List<ScriptableRendererFeature>(10);
-        
-        RenderTargetIdentifier m_CameraColorTarget;
-        RenderTargetIdentifier m_CameraDepthTarget;
-        
+
         bool m_FirstTimeCameraColorTargetIsBound = true; // flag used to track when m_CameraColorTarget should be cleared (if necessary), as well as other special actions only performed the first time m_CameraColorTarget is bound as a render target
         bool m_FirstTimeCameraDepthTargetIsBound = true; // flag used to track when m_CameraDepthTarget should be cleared (if necessary), the first time m_CameraDepthTarget is bound as a render target
         bool m_XRRenderTargetNeedsClear = false;
@@ -224,6 +221,11 @@ namespace UnityEngine.Rendering.Universal
         const string k_SetRenderTarget = "Set RenderTarget";
         const string k_ReleaseResourcesTag = "Release Resources";
 
+        // 从forwardrenderer传递过来的最终的framebuffer, 如果camera有rt, 则是rt
+        RenderTargetIdentifier m_CameraColorTarget;
+        RenderTargetIdentifier m_CameraDepthTarget;
+        
+        // 当前激活的， 有可能是m_CameraColorTarget 或者 m_CameraDepthTarget
         static RenderTargetIdentifier[] m_ActiveColorAttachments = new RenderTargetIdentifier[]{0, 0, 0, 0, 0, 0, 0, 0 };
         static RenderTargetIdentifier m_ActiveDepthAttachment;
         static bool m_InsideStereoRenderBlock;
@@ -268,6 +270,7 @@ namespace UnityEngine.Rendering.Universal
         {
         }
         
+        // 配置激活的
         internal static void ConfigureActiveTarget(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment)
         {
             m_ActiveColorAttachments[0] = colorAttachment;
@@ -277,6 +280,7 @@ namespace UnityEngine.Rendering.Universal
             m_ActiveDepthAttachment = depthAttachment;
         }
 
+        // 配置相机目标
         /// <summary>
         /// Configures the camera target.
         /// </summary>

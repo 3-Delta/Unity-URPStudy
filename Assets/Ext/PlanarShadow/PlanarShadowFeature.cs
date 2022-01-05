@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 // https://zhuanlan.zhihu.com/p/266174847
 // https://zhuanlan.zhihu.com/p/31504088
 // https://github.com/czy-moyu/PlanarShadow-URP
-public class PlanarShadow : ScriptableRendererFeature {
+public class PlanarShadowFeature : ScriptableRendererFeature {
     [Serializable]
     public class PlanarShadowSettings {
         public Vector3 planeNormalWS = Vector3.forward;

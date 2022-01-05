@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: PlanarShadow
   m_EditorClassIdentifier: 
   m_Active: 1
-  setting:
+  settings:
     planeNormalWS: {x: 0, y: 0, z: 1}
     shadowMat: {fileID: 2100000, guid: 7bbb74332406aec439bccc871a587b5b, type: 2}
     stencilSettings:
-      overrideStencilState: 0
+      overrideStencilState: 1
       stencilReference: 0
       stencilCompareFunction: 3
       passOperation: 6

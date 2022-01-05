@@ -37,12 +37,19 @@ namespace UnityEngine.Rendering.Universal
         SceneViewDepthCopyPass m_SceneViewDepthCopyPass;
 #endif
 
+        // 写入的
         RenderTargetHandle m_ActiveCameraColorAttachment;
         RenderTargetHandle m_ActiveCameraDepthAttachment;
+        
+        // 写入的，其实这里只是申请一些shader的name
         RenderTargetHandle m_CameraColorAttachment;
         RenderTargetHandle m_CameraDepthAttachment;
+        
+        // 采样 读取的， 总是从activeAttachment -> 这里的texture
         RenderTargetHandle m_DepthTexture;
         RenderTargetHandle m_OpaqueColor;
+        
+        // 后处理的
         RenderTargetHandle m_AfterPostProcessColor;
         RenderTargetHandle m_ColorGradingLut;
 
@@ -257,6 +264,7 @@ namespace UnityEngine.Rendering.Universal
                 m_ActiveCameraDepthAttachment = m_CameraDepthAttachment;
             }
 
+            // 给每个urp render配置最终的rttarget
             ConfigureCameraTarget(m_ActiveCameraColorAttachment.Identifier(), m_ActiveCameraDepthAttachment.Identifier());
 
             // 针对renderfeature处理
