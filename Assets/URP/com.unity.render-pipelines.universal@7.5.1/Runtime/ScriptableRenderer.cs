@@ -424,6 +424,7 @@ namespace UnityEngine.Rendering.Universal
 
             DrawGizmos(context, camera, GizmoSubset.PostImageEffects);
 
+            // 3. 执行各个pass的cleanup
             InternalFinishRendering(context, cameraData.resolveFinalTarget);
             blockRanges.Dispose();
             CommandBufferPool.Release(cmd);
@@ -537,6 +538,7 @@ namespace UnityEngine.Rendering.Universal
                 context.Submit();
         }
 
+        // 执行每个pass
         void ExecuteRenderPass(ScriptableRenderContext context, ScriptableRenderPass renderPass, ref RenderingData renderingData, int eyeIndex)
         {
             ref CameraData cameraData = ref renderingData.cameraData;
@@ -544,6 +546,7 @@ namespace UnityEngine.Rendering.Universal
             bool firstTimeStereo = false;
             
             CommandBuffer cmd = CommandBufferPool.Get(k_SetRenderTarget);
+            // 1. 先配置
             renderPass.Configure(cmd, cameraData.cameraTargetDescriptor);
             renderPass.eyeIndex = eyeIndex;
 
@@ -562,6 +565,7 @@ namespace UnityEngine.Rendering.Universal
                 XRUtils.DrawOcclusionMesh(cmd, camera);
             }
 
+            // 2. 再执行
             renderPass.Execute(context, ref renderingData);
         }
 
