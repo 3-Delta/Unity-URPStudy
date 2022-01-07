@@ -10,7 +10,7 @@ namespace UnityEngine.Rendering.Universal
     [ExcludeFromPreset]
       public abstract class ScriptableRendererFeature : ScriptableObject
     {
-        [SerializeField, HideInInspector] private bool m_Active = true;
+        [SerializeField] private bool m_Active = true;
         /// <summary>
         /// Returns the state of the ScriptableRenderFeature (true: the feature is active, false: the feature is inactive). Use the method ScriptableRenderFeature.SetActive to change the value of this variable.
         /// </summary>
