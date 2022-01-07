@@ -4,32 +4,31 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering.Universal.Internal;
 using UnityEngine.Serialization;
 
+// https://answer.uwa4d.com/question/5fa5040fdc477370c2c1f080
 public class GrabPassFeature : ScriptableRendererFeature {
     [System.Serializable]
     public class GrabSettings {
-        public Downsampling sample = Downsampling._2xBilinear;
+        public Downsampling downSample = Downsampling._2xBilinear;
         public Material material;
     }
 
     class GrabPass : CopyColorPass {
         public const string rtName = "_GrabPass";
 
-        public RenderTargetHandle to;
+        public RenderTargetHandle to = new RenderTargetHandle() {
+            id = Shader.PropertyToID(rtName)
+        };
 
-        public GrabPass(RenderPassEvent renderEvent, Material material) : base(renderEvent, material) {
-            to = new RenderTargetHandle() {
-                id = Shader.PropertyToID(rtName)
-            };
-        }
+        public GrabPass(RenderPassEvent renderEvent, Material material) : base(renderEvent, material) { }
 
         public void Setup(RenderTargetIdentifier from, Downsampling sample) {
             base.Setup(from, to, sample);
         }
     }
-    
+
     public RenderPassEvent renderEvent = RenderPassEvent.BeforeRenderingPostProcessing;
     public GrabSettings settings;
-    
+
     private GrabPass pass;
 
     public override void Create() {
@@ -37,7 +36,7 @@ public class GrabPassFeature : ScriptableRendererFeature {
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData) {
-        pass.Setup(renderer.cameraColorTarget, settings.sample);
+        pass.Setup(renderer.cameraColorTarget, settings.downSample);
         renderer.EnqueuePass(pass);
     }
 }
