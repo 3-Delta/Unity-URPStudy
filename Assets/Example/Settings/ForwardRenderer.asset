@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-5749251387024624596
+--- !u!114 &-6993576839792306497
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,20 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac51d87386bc37e49ad9545305a1de77, type: 3}
-  m_Name: PlanarShadow
+  m_Script: {fileID: 11500000, guid: 92ca6e09923a9ca4e8f93d5e86881916, type: 3}
+  m_Name: NewGrabPassFeature
   m_EditorClassIdentifier: 
   m_Active: 1
+  renderEvent: 550
   settings:
-    planeNormalWS: {x: 0, y: 0, z: 1}
-    shadowMat: {fileID: 2100000, guid: 7bbb74332406aec439bccc871a587b5b, type: 2}
-    stencilSettings:
-      overrideStencilState: 1
-      stencilReference: 0
-      stencilCompareFunction: 3
-      passOperation: 6
-      failOperation: 0
-      zFailOperation: 0
+    sample: 1
+    material: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36,8 +30,8 @@ MonoBehaviour:
   m_Name: ForwardRenderer
   m_EditorClassIdentifier: 
   m_RendererFeatures:
-  - {fileID: -5749251387024624596}
-  m_RendererFeatureMap: 2cb4f907538e36b0
+  - {fileID: -6993576839792306497}
+  m_RendererFeatureMap: 89cdd2a53815d7f5bfd6c7f2ead2f19e
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   shaders:
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
