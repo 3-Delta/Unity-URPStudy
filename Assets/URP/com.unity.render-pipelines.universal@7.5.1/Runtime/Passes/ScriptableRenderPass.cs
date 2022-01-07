@@ -63,9 +63,11 @@ namespace UnityEngine.Rendering.Universal
         internal int eyeIndex { get; set; }
 
         internal bool overrideCameraTarget { get; set; }
-        internal bool isBlitRenderPass { get; set; }
 
         // 其实默认就是framebuffer
+        // 该pass渲染的目标target, 一个targe有两个目的，
+        // 1：color
+        // 2: depth
         RenderTargetIdentifier[] m_ColorAttachments = new RenderTargetIdentifier[]{BuiltinRenderTextureType.CameraTarget};
         RenderTargetIdentifier m_DepthAttachment = BuiltinRenderTextureType.CameraTarget;
         
@@ -77,10 +79,11 @@ namespace UnityEngine.Rendering.Universal
             renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
             m_ColorAttachments = new RenderTargetIdentifier[]{BuiltinRenderTextureType.CameraTarget, 0, 0, 0, 0, 0, 0, 0};
             m_DepthAttachment = BuiltinRenderTextureType.CameraTarget;
+            
             m_ClearFlag = ClearFlag.None;
             m_ClearColor = Color.black;
+            
             overrideCameraTarget = false;
-            isBlitRenderPass = false;
             eyeIndex = 0;
         }
 

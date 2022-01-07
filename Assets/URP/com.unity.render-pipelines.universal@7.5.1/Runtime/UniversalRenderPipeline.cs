@@ -204,6 +204,7 @@ namespace UnityEngine.Rendering.Universal
             CommandBuffer cmd = CommandBufferPool.Get(sampler.name);
             using (new ProfilingScope(cmd, sampler))
             {
+                // 1. clear上次
                 renderer.Clear(cameraData.renderType);
                 renderer.SetupCullingParameters(ref cullingParameters, ref cameraData);
 
@@ -226,10 +227,10 @@ namespace UnityEngine.Rendering.Universal
                     ApplyAdaptivePerformance(ref renderingData);
 #endif
 
-                // 组织passqueue
+                // 2. 组织passqueue
                 renderer.Setup(context, ref renderingData);
                 
-                // 执行passqueue
+                // 3. 执行passqueue
                 renderer.Execute(context, ref renderingData);
             }
 

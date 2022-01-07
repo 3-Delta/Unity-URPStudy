@@ -12,10 +12,10 @@ public class GrabPassFeature : ScriptableRendererFeature {
         public Material material;
     }
 
-    class GrabPass : CopyColorPass {
+    public class GrabPass : CopyColorPass {
         public const string rtName = "_GrabPass";
 
-        public RenderTargetHandle to = new RenderTargetHandle() {
+        private RenderTargetHandle to = new RenderTargetHandle() {
             id = Shader.PropertyToID(rtName)
         };
 

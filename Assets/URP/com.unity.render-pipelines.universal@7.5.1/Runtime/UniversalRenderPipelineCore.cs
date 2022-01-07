@@ -341,6 +341,7 @@ namespace UnityEngine.Rendering.Universal
                 desc.colorFormat = camera.targetTexture.descriptor.colorFormat;
                 desc.depthBufferBits = camera.targetTexture.descriptor.depthBufferBits;
                 desc.msaaSamples = camera.targetTexture.descriptor.msaaSamples;
+                // camera的rt默认是srgb格式
                 desc.sRGB = camera.targetTexture.descriptor.sRGB;
             }
             else
