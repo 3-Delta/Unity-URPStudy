@@ -225,9 +225,9 @@ namespace UnityEngine.Rendering.Universal
         RenderTargetIdentifier m_CameraColorTarget;
         RenderTargetIdentifier m_CameraDepthTarget;
         
-        // 当前激活的， 有可能是m_CameraColorTarget 或者 m_CameraDepthTarget
-        static RenderTargetIdentifier[] m_ActiveColorAttachments = new RenderTargetIdentifier[]{0, 0, 0, 0, 0, 0, 0, 0 };
-        static RenderTargetIdentifier m_ActiveDepthAttachment;
+        // 上次的rttarget
+        static RenderTargetIdentifier[] m_PreColorAttachments = new RenderTargetIdentifier[]{0, 0, 0, 0, 0, 0, 0, 0 };
+        static RenderTargetIdentifier m_PreDepthAttachment;
         static bool m_InsideStereoRenderBlock;
 
         // CommandBuffer.SetRenderTarget(RenderTargetIdentifier[] colors, RenderTargetIdentifier depth, int mipLevel, CubemapFace cubemapFace, int depthSlice);
@@ -270,14 +270,14 @@ namespace UnityEngine.Rendering.Universal
         {
         }
         
-        // 配置激活的
+        // blit以及正常渲染，都可能重新设置target,所以都需要记录一下last
         internal static void ConfigureActiveTarget(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment)
         {
-            m_ActiveColorAttachments[0] = colorAttachment;
-            for (int i = 1; i < m_ActiveColorAttachments.Length; ++i)
-                m_ActiveColorAttachments[i] = 0;
+            m_PreColorAttachments[0] = colorAttachment;
+            for (int i = 1; i < m_PreColorAttachments.Length; ++i)
+                m_PreColorAttachments[i] = 0;
 
-            m_ActiveDepthAttachment = depthAttachment;
+            m_PreDepthAttachment = depthAttachment;
         }
 
         // 配置相机目标
@@ -512,10 +512,10 @@ namespace UnityEngine.Rendering.Universal
 
         internal void Clear(CameraRenderType cameraType)
         {
-            m_ActiveColorAttachments[0] = BuiltinRenderTextureType.CameraTarget;
-            for (int i = 1; i < m_ActiveColorAttachments.Length; ++i)
-                m_ActiveColorAttachments[i] = 0;
-            m_ActiveDepthAttachment = BuiltinRenderTextureType.CameraTarget;
+            m_PreColorAttachments[0] = BuiltinRenderTextureType.CameraTarget;
+            for (int i = 1; i < m_PreColorAttachments.Length; ++i)
+                m_PreColorAttachments[i] = 0;
+            m_PreDepthAttachment = BuiltinRenderTextureType.CameraTarget;
 
             m_InsideStereoRenderBlock = false;
 
@@ -554,6 +554,7 @@ namespace UnityEngine.Rendering.Universal
             renderPass.Configure(cmd, cameraData.cameraTargetDescriptor);
             renderPass.eyeIndex = eyeIndex;
 
+            // 对每个pass的rttarget进行处理
             SetRenderPassAttachments(cmd, renderPass, ref cameraData, ref firstTimeStereo);
 
             // We must execute the commands recorded at this point because potential call to context.StartMultiEye(cameraData.camera) below will alter internal renderer states
@@ -674,7 +675,7 @@ namespace UnityEngine.Rendering.Universal
                 finalClearFlag |= needCustomCameraColorClear ? 0 : (renderPass.clearFlag & ClearFlag.Color);
 
                 // Only setup render target if current render pass attachments are different from the active ones.
-                if (!RenderingUtils.SequenceEqual(renderPass.colorAttachments, m_ActiveColorAttachments) || renderPass.depthAttachment != m_ActiveDepthAttachment || finalClearFlag != ClearFlag.None)
+                if (!RenderingUtils.SequenceEqual(renderPass.colorAttachments, m_PreColorAttachments) || renderPass.depthAttachment != m_PreDepthAttachment || finalClearFlag != ClearFlag.None)
                 {
                     int lastValidRTindex = RenderingUtils.LastValid(renderPass.colorAttachments);
                     if (lastValidRTindex >= 0)
@@ -702,7 +703,8 @@ namespace UnityEngine.Rendering.Universal
                     // early return so we don't change current render target setup.
                     if (renderPass.renderPassEvent < RenderPassEvent.BeforeRenderingOpaques)
                         return;
-
+                    
+                    // 如果未明显设置过pass的target, 则使用renderer的target
                     passColorAttachment = m_CameraColorTarget;
                     passDepthAttachment = m_CameraDepthTarget;
                 }
@@ -749,23 +751,23 @@ namespace UnityEngine.Rendering.Universal
                     //m_XRRenderTargetNeedsClear = false; // note: is it possible that XR camera multi-pass target gets clear first when bound as depth target?
                     //       in this case we might need need to register that it does not need clear any more (until next call to BeginXRRendering)
                 }
-                else
+                else {
                     finalClearFlag |= (renderPass.clearFlag & ClearFlag.Depth);
-
-                // 如果某些pass重新设置了color/depth attachment, 那么scriptrender会自动重新SetRenderTarget
+                }
+                
+                // 上一次target和当前pass的target不一致
                 // Only setup render target if current render pass attachments are different from the active ones
-                if (passColorAttachment != m_ActiveColorAttachments[0] || passDepthAttachment != m_ActiveDepthAttachment || finalClearFlag != ClearFlag.None)
+                if (passColorAttachment != m_PreColorAttachments[0] || passDepthAttachment != m_PreDepthAttachment || finalClearFlag != ClearFlag.None) {
                     SetRenderTarget(cmd, passColorAttachment, passDepthAttachment, finalClearFlag, finalClearColor);
+                }
             }
         }
         
         internal static void SetRenderTarget(CommandBuffer cmd, RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment, ClearFlag clearFlag, Color clearColor)
         {
-            m_ActiveColorAttachments[0] = colorAttachment;
-            for (int i = 1; i < m_ActiveColorAttachments.Length; ++i)
-                m_ActiveColorAttachments[i] = 0;
-
-            m_ActiveDepthAttachment = depthAttachment;
+            #region 记录上一个target
+            ConfigureActiveTarget(colorAttachment, depthAttachment);
+            #endregion
 
             RenderBufferLoadAction colorLoadAction = ((uint)clearFlag & (uint)ClearFlag.Color) != 0 ?
                 RenderBufferLoadAction.DontCare : RenderBufferLoadAction.Load;
@@ -823,8 +825,8 @@ namespace UnityEngine.Rendering.Universal
 
         static void SetRenderTarget(CommandBuffer cmd, RenderTargetIdentifier[] colorAttachments, RenderTargetIdentifier depthAttachment, ClearFlag clearFlag, Color clearColor)
         {
-            m_ActiveColorAttachments = colorAttachments;
-            m_ActiveDepthAttachment = depthAttachment;
+            m_PreColorAttachments = colorAttachments;
+            m_PreDepthAttachment = depthAttachment;
 
             CoreUtils.SetRenderTarget(cmd, colorAttachments, depthAttachment, clearFlag, clearColor);
         }

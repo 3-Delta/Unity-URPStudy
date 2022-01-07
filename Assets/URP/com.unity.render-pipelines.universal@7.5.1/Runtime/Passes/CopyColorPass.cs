@@ -17,14 +17,15 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         private RenderTargetIdentifier source { get; set; }
         private RenderTargetHandle destination { get; set; }
-        const string m_ProfilerTag = "Copy Color";
+        private string m_ProfilerTag = "Copy Color";
 
         /// <summary>
         /// Create the CopyColorPass
         /// </summary>
-        public CopyColorPass(RenderPassEvent evt, Material samplingMaterial)
+        public CopyColorPass(RenderPassEvent evt, Material samplingMaterial, string rofilerTag = "Copy Color")
         {
             m_SamplingMaterial = samplingMaterial;
+            m_ProfilerTag = rofilerTag;
             m_SampleOffsetShaderHandle = Shader.PropertyToID("_SampleOffset");
             renderPassEvent = evt;
             m_DownsamplingMethod = Downsampling.None;

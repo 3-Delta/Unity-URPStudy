@@ -127,6 +127,7 @@ namespace UnityEngine.Rendering.Universal
             
             m_AfterPostProcessColor.Init("_AfterPostProcessTexture");
             m_ColorGradingLut.Init("_InternalGradingLut");
+            
             m_ForwardLights = new ForwardLights();
 
             supportedRenderingFeatures = new RenderingFeatures()
@@ -266,12 +267,12 @@ namespace UnityEngine.Rendering.Universal
                 m_ActiveCameraDepthAttachment = m_CameraDepthAttachment;
             }
 
-            // 在任务pass enterquque之前
+            // 在任何pass enterquque之前
             // 给每个urp render配置最终的rttarget
             ConfigureCameraTarget(m_ActiveCameraColorAttachment.Identifier(), m_ActiveCameraDepthAttachment.Identifier());
 
             // 针对renderfeature处理
-            // 会发现先添加的feature的pass, 然后下面才去enqueue urp默认的一些pass, 比如半透明pass，透明pass
+            // 1. 会发现先添加的feature的pass, 然后下面才去enqueue urp默认的一些pass, 比如半透明pass，透明pass
             // 在此之前没有enqueue的操作
             for (int i = 0; i < rendererFeatures.Count; ++i)
             {
@@ -279,7 +280,7 @@ namespace UnityEngine.Rendering.Universal
                     rendererFeatures[i].AddRenderPasses(this, ref renderingData);
             }
 
-            // 将入队的feature的pass进行validate矫正，因为之前没有默认pass入队，只有feature的pass入队
+            // 2. 将入队的feature的pass进行validate矫正，因为之前没有默认pass入队，只有feature的pass入队
             int count = activeRenderPassQueue.Count;
             for (int i = count - 1; i >= 0; i--)
             {
