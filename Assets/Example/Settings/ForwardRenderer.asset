@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92ca6e09923a9ca4e8f93d5e86881916, type: 3}
-  m_Name: NewGrabPassFeature
+  m_Name: GrabPass
   m_EditorClassIdentifier: 
   m_Active: 1
-  renderEvent: 550
+  renderEvent: 450
   settings:
-    sample: 1
-    material: {fileID: 0}
+    downSample: 0
+    material: {fileID: 2100002, guid: ff6dc36862fe41641bb21568d92147c9, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RendererFeatures:
   - {fileID: -6993576839792306497}
-  m_RendererFeatureMap: 89cdd2a53815d7f5bfd6c7f2ead2f19e
+  m_RendererFeatureMap: 89cdd2a53815d7f51ead10fc5209bb59
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   shaders:
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
