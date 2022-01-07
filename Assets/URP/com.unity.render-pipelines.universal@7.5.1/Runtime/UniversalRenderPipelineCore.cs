@@ -120,7 +120,7 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// True if the camera device projection matrix is flipped. This happens when the pipeline is rendering
         /// to a render texture in non OpenGL platforms. If you are doing a custom Blit pass to copy camera textures
-        /// (_CameraColorTexture, _CameraDepthAttachment) you need to check this flag to know if you should flip the
+        /// (_CameraColorAttachment, _CameraDepthAttachment) you need to check this flag to know if you should flip the
         /// matrix when rendering with for cmd.Draw* and reading from camera textures.
         /// 根据opengl平台或者dx平台判断y轴
         /// </summary>
