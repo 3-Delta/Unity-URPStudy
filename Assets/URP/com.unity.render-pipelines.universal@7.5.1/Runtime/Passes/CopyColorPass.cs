@@ -16,7 +16,8 @@ namespace UnityEngine.Rendering.Universal.Internal
         Downsampling m_DownsamplingMethod;
 
         private RenderTargetIdentifier source { get; set; }
-        private RenderTargetHandle destination { get; set; }
+        public RenderTargetHandle destination { get; protected set; }
+        
         private string m_ProfilerTag = "Copy Color";
 
         /// <summary>

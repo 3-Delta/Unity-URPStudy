@@ -13,13 +13,11 @@ public class GrabPassFeature : ScriptableRendererFeature {
     }
 
     public class GrabPass : CopyColorPass {
-        public const string profilerTag = "_GrabPass";
+        private RenderTargetHandle to;
 
-        private RenderTargetHandle to = new RenderTargetHandle() {
-            id = Shader.PropertyToID(profilerTag)
-        };
-
-        public GrabPass(RenderPassEvent renderEvent, Material material) : base(renderEvent, material, profilerTag) { }
+        public GrabPass(RenderPassEvent renderEvent, Material material, string profilerTag = "_GrabPass") : base(renderEvent, material, profilerTag) {
+            to.id = Shader.PropertyToID(profilerTag);
+        }
 
         public void Setup(RenderTargetIdentifier from, Downsampling sample) {
             base.Setup(from, to, sample);
