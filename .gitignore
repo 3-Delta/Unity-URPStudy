@@ -190,3 +190,13 @@
 /Prj2021.2/obj
 /Prj2021.2/Temp
 /Prj2021.2/UserSettings
+/Prj2021.2/SeparateAssembly.csproj
+/Prj2021.2/Unity.Burst.Editor.Tests.csproj
+/Prj2021.2/Unity.Burst.Tests.UnitTests.csproj
+/Prj2021.2/Unity.Mathematics.Tests.csproj
+/Prj2021.2/Unity.RenderPipelines.Core.Editor.Tests.csproj
+/Prj2021.2/Unity.RenderPipelines.Core.Runtime.Tests.csproj
+/Prj2021.2/Unity.RenderPipelines.Universal.Editor.Tests.csproj
+/Prj2021.2/Unity.RenderPipelines.Universal.Runtime.Tests.csproj
+/Prj2021.2/Unity.Searcher.EditorTests.csproj
+/Prj2021.2/Unity.ShaderGraph.Editor.Tests.csproj
