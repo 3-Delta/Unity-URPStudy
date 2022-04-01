@@ -1,0 +1,23 @@
+${VFXBegin:VFXPassDepth}"DepthForwardOnly"${VFXEnd}
+${VFXBegin:VFXPassForward}"ForwardOnly"${VFXEnd}
+${VFXBegin:VFXPassShadow}"ShadowCaster"${VFXEnd}
+${VFXBegin:VFXPassVelocity}"MotionVectors"${VFXEnd}
+
+${VFXBegin:VFXPassDepthDefine}#define SHADERPASS SHADERPASS_DEPTH_ONLY${VFXEnd}
+${VFXBegin:VFXPassForwardDefine}#define SHADERPASS SHADERPASS_FORWARD_UNLIT${VFXEnd}
+${VFXBegin:VFXPassShadowDefine}#define SHADERPASS SHADERPASS_SHADOWS${VFXEnd}
+${VFXBegin:VFXPassVelocityDefine}#define SHADERPASS SHADERPASS_MOTION_VECTORS${VFXEnd}
+
+${VFXBegin:VFXPassForwardAdditionalPragma}#pragma multi_compile _ DEBUG_DISPLAY${VFXEnd}
+
+${VFXBegin:VFXShaderGraphFunctionsInclude}
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Common.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Packing.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/Color.hlsl"
+#include "Assets/URP/com.unity.render-pipelines.core@7.5.1/ShaderLibrary/EntityLighting.hlsl"
+#include "Assets/HDRP/com.unity.render-pipelines.high-definition@7.3.1/Runtime/Material/BuiltinGIUtilities.hlsl"
+#ifndef SHADERPASS
+#error Shaderpass should be defined at this stage.
+#endif
+#include "Assets/HDRP/com.unity.render-pipelines.high-definition@7.3.1/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+${VFXEnd}
