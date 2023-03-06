@@ -26,17 +26,7 @@ namespace UnityEngine.Rendering
         /// </summary>
         /// <seealso cref="VolumeStack"/>
         public VolumeStack stack { get; set; }
-
-        /// <summary>
-        /// The current list of all available types that derive from <see cref="VolumeComponent"/>.
-        /// </summary>
-        [Obsolete("Please use baseComponentTypeArray instead.")]
-        public IEnumerable<Type> baseComponentTypes
-        {
-            get => baseComponentTypeArray;
-            private set => baseComponentTypeArray = value.ToArray();
-        }
-
+        
         /// <summary>
         /// The current list of all available types that derive from <see cref="VolumeComponent"/>.
         /// </summary>
@@ -487,23 +477,5 @@ namespace UnityEngine.Rendering
             return true;
 #endif
         }
-    }
-
-    /// <summary>
-    /// A scope in which a Camera filters a Volume.
-    /// </summary>
-    [Obsolete("VolumeIsolationScope is deprecated, it does not have any effect anymore.")]
-    public struct VolumeIsolationScope : IDisposable
-    {
-        /// <summary>
-        /// Constructs a scope in which a Camera filters a Volume.
-        /// </summary>
-        /// <param name="unused">Unused parameter.</param>
-        public VolumeIsolationScope(bool unused) { }
-
-        /// <summary>
-        /// Stops the Camera from filtering a Volume.
-        /// </summary>
-        void IDisposable.Dispose() { }
     }
 }

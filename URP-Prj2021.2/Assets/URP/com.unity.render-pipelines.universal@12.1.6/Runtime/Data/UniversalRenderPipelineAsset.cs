@@ -927,12 +927,6 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         public VolumeFrameworkUpdateMode volumeFrameworkUpdateMode => m_VolumeFrameworkUpdateMode;
 
-        [Obsolete("PipelineDebugLevel is deprecated. Calling debugLevel is not necessary.", false)]
-        public PipelineDebugLevel debugLevel
-        {
-            get => PipelineDebugLevel.Disabled;
-        }
-
         public bool useSRPBatcher
         {
             get { return m_UseSRPBatcher; }
@@ -1165,20 +1159,6 @@ namespace UnityEngine.Rendering.Universal
 
             if (k_AssetVersion < 6)
             {
-#pragma warning disable 618 // Obsolete warning
-                // Adding an upgrade here so that if it was previously set to 2 it meant 4 cascades.
-                // So adding a 3rd cascade shifted this value up 1.
-                int value = (int)m_ShadowCascades;
-                if (value == 2)
-                {
-                    m_ShadowCascadeCount = 4;
-                }
-                else
-                {
-                    m_ShadowCascadeCount = value + 1;
-                }
-                k_AssetVersion = 6;
-#pragma warning restore 618 // Obsolete warning
             }
 
             if (k_AssetVersion < 7)

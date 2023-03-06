@@ -49,9 +49,12 @@ namespace UnityEngine.Rendering.Universal
     {
         public CullingResults cullResults;
         public CameraData cameraData;
+        
         public LightData lightData;
         public ShadowData shadowData;
+        
         public PostProcessingData postProcessingData;
+        
         public bool supportsDynamicBatching;
         public PerObjectData perObjectData;
 
@@ -213,10 +216,7 @@ namespace UnityEngine.Rendering.Universal
         public SortingCriteria defaultOpaqueSortFlags;
 
         internal XRPass xr;
-
-        [Obsolete("Please use xr.enabled instead.")]
-        public bool isStereoEnabled;
-
+        
         public float maxShadowDistance;
         public bool postProcessEnabled;
 
@@ -251,8 +251,7 @@ namespace UnityEngine.Rendering.Universal
     public struct ShadowData
     {
         public bool supportsMainLightShadows;
-        [Obsolete("Obsolete, this feature was replaced by new 'ScreenSpaceShadows' renderer feature")]
-        public bool requiresScreenSpaceShadowResolve;
+        
         public int mainLightShadowmapWidth;
         public int mainLightShadowmapHeight;
         public int mainLightShadowCascadesCount;
@@ -263,11 +262,14 @@ namespace UnityEngine.Rendering.Universal
         /// Where value 0 is used for no shadow fade.
         /// </summary>
         public float mainLightShadowCascadeBorder;
+        
         public bool supportsAdditionalLightShadows;
+        
         public int additionalLightsShadowmapWidth;
         public int additionalLightsShadowmapHeight;
         public bool supportsSoftShadows;
         public int shadowmapDepthBufferBits;
+        
         public List<Vector4> bias;
         public List<int> resolution;
 
@@ -497,21 +499,7 @@ namespace UnityEngine.Rendering.Universal
 
             return camera.cameraType == CameraType.Game || camera.cameraType == CameraType.VR;
         }
-
-        /// <summary>
-        /// Checks if a camera is rendering in stereo mode.
-        /// </summary>
-        /// <param name="camera">Camera to check state from.</param>
-        /// <returns>Returns true if the given camera is rendering in stereo mode, false otherwise.</returns>
-        [Obsolete("Please use CameraData.xr.enabled instead.")]
-        public static bool IsStereoEnabled(Camera camera)
-        {
-            if (camera == null)
-                throw new ArgumentNullException("camera");
-
-            return IsGameCamera(camera) && (camera.stereoTargetEye == StereoTargetEyeMask.Both);
-        }
-
+        
         /// <summary>
         /// Returns the current render pipeline asset for the current quality setting.
         /// If no render pipeline asset is assigned in QualitySettings, then returns the one assigned in GraphicsSettings.
@@ -520,21 +508,7 @@ namespace UnityEngine.Rendering.Universal
         {
             get => GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
         }
-
-        /// <summary>
-        /// Checks if a camera is rendering in MultiPass stereo mode.
-        /// </summary>
-        /// <param name="camera">Camera to check state from.</param>
-        /// <returns>Returns true if the given camera is rendering in multi pass stereo mode, false otherwise.</returns>
-        [Obsolete("Please use CameraData.xr.singlePassEnabled instead.")]
-        static bool IsMultiPassStereoEnabled(Camera camera)
-        {
-            if (camera == null)
-                throw new ArgumentNullException("camera");
-
-            return false;
-        }
-
+        
         Comparison<Camera> cameraComparison = (camera1, camera2) => { return (int)camera1.depth - (int)camera2.depth; };
 #if UNITY_2021_1_OR_NEWER
         void SortCameras(List<Camera> cameras)

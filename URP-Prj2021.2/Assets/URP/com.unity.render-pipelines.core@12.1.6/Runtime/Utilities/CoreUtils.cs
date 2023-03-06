@@ -81,32 +81,7 @@ namespace UnityEngine.Rendering
         }
 
         const string obsoletePriorityMessage = "Use CoreUtils.Priorities instead";
-
-        /// <summary>Edit Menu priority 1</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int editMenuPriority1 = 320;
-        /// <summary>Edit Menu priority 2</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int editMenuPriority2 = 331;
-        /// <summary>Edit Menu priority 3</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int editMenuPriority3 = 342;
-        /// <summary>Edit Menu priority 4</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int editMenuPriority4 = 353;
-        /// <summary>Asset Create Menu priority 1</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int assetCreateMenuPriority1 = 230;
-        /// <summary>Asset Create Menu priority 2</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int assetCreateMenuPriority2 = 241;
-        /// <summary>Asset Create Menu priority 3</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int assetCreateMenuPriority3 = 300;
-        /// <summary>Game Object Menu priority</summary>
-        [Obsolete(obsoletePriorityMessage, false)]
-        public const int gameObjectMenuPriority = 10;
-
+        
         static Cubemap m_BlackCubeTexture;
         /// <summary>
         /// Black cubemap texture.
@@ -1302,32 +1277,7 @@ namespace UnityEngine.Rendering
 #endif
             return false;
         }
-
-        /// <summary>
-        /// Draw a renderer list.
-        /// </summary>
-        /// <param name="renderContext">Current Scriptable Render Context.</param>
-        /// <param name="cmd">Command Buffer used for rendering.</param>
-        /// <param name="rendererList">Renderer List to render.</param>
-        [Obsolete("Use the updated RendererList API in the UnityEngine.Rendering.RendererUtils namespace.")]
-        public static void DrawRendererList(ScriptableRenderContext renderContext, CommandBuffer cmd, Experimental.Rendering.RendererList rendererList)
-        {
-            if (!rendererList.isValid)
-                throw new ArgumentException("Invalid renderer list provided to DrawRendererList");
-
-            // This is done here because DrawRenderers API lives outside command buffers so we need to make call this before doing any DrawRenders or things will be executed out of order
-            renderContext.ExecuteCommandBuffer(cmd);
-            cmd.Clear();
-
-            if (rendererList.stateBlock == null)
-                renderContext.DrawRenderers(rendererList.cullingResult, ref rendererList.drawSettings, ref rendererList.filteringSettings);
-            else
-            {
-                var renderStateBlock = rendererList.stateBlock.Value;
-                renderContext.DrawRenderers(rendererList.cullingResult, ref rendererList.drawSettings, ref rendererList.filteringSettings, ref renderStateBlock);
-            }
-        }
-
+        
         /// <summary>
         /// Draw a renderer list.
         /// </summary>

@@ -65,17 +65,7 @@ namespace UnityEngine.Rendering
             this.pipelineTypes = pipelineTypes;
         }
     }
-
-
-    /// <summary>
-    /// An attribute to hide the volume component to be added through `Add Override` button on the volume component list
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    [Obsolete("VolumeComponentDeprecated has been deprecated (UnityUpgradable) -> [UnityEngine] UnityEngine.HideInInspector", false)]
-    public sealed class VolumeComponentDeprecated : Attribute
-    {
-    }
-
+    
     /// <summary>
     /// The base class for all the components that can be part of a <see cref="VolumeProfile"/>.
     /// The Volume framework automatically handles and interpolates any <see cref="VolumeParameter"/> members found in this class.

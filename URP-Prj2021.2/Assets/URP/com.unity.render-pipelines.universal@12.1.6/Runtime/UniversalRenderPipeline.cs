@@ -539,10 +539,6 @@ namespace UnityEngine.Rendering.Universal
             if (xrPass.enabled)
             {
                 baseCameraData.xr = xrPass;
-                // XRTODO: remove isStereoEnabled in 2021.x
-#pragma warning disable 0618
-                baseCameraData.isStereoEnabled = xrPass.enabled;
-#pragma warning restore 0618
 
                 // Helper function for updating cameraData with xrPass Data
                 m_XRSystem.UpdateCameraData(ref baseCameraData, baseCameraData.xr);
@@ -1043,13 +1039,7 @@ namespace UnityEngine.Rendering.Universal
             shadowData.bias = m_ShadowBiasData;
             shadowData.resolution = m_ShadowResolutionData;
             shadowData.supportsMainLightShadows = SystemInfo.supportsShadows && settings.supportsMainLightShadows && mainLightCastShadows;
-
-            // We no longer use screen space shadows in URP.
-            // This change allows us to have particles & transparent objects receive shadows.
-#pragma warning disable 0618
-            shadowData.requiresScreenSpaceShadowResolve = false;
-#pragma warning restore 0618
-
+            
             shadowData.mainLightShadowCascadesCount = settings.shadowCascadeCount;
             shadowData.mainLightShadowmapWidth = settings.mainLightShadowmapResolution;
             shadowData.mainLightShadowmapHeight = settings.mainLightShadowmapResolution;

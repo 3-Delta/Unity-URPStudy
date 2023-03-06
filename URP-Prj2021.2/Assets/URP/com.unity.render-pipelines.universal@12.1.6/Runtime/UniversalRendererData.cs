@@ -39,9 +39,6 @@ namespace UnityEngine.Rendering.Universal
             [Reload("Shaders/Utils/CopyDepth.shader")]
             public Shader copyDepthPS;
 
-            [Obsolete("Obsolete, this feature will be supported by new 'ScreenSpaceShadows' renderer feature")]
-            public Shader screenSpaceShadowPS;
-
             [Reload("Shaders/Utils/Sampling.shader")]
             public Shader samplingPS;
 

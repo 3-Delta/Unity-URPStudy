@@ -105,23 +105,7 @@ namespace UnityEditor.Rendering
             }
         }
     }
-
-    /// <summary>
-    /// Interface that should be used with [ScriptableRenderPipelineExtension(type))] attribute to dispatch ContextualMenu calls on the different SRPs
-    /// </summary>
-    /// <typeparam name="T">This must be a component that require AdditionalData in your SRP</typeparam>
-    [Obsolete("The menu items are handled automatically for components with the AdditionalComponentData attribute", false)]
-    public interface IRemoveAdditionalDataContextualMenu<T>
-        where T : Component
-    {
-        /// <summary>
-        /// Remove the given component
-        /// </summary>
-        /// <param name="component">The component to remove</param>
-        /// <param name="dependencies">Dependencies.</param>
-        void RemoveComponent(T component, IEnumerable<Component> dependencies);
-    }
-
+    
     internal class RemoveAdditionalDataContextualMenu<T>
         where T : Component
     {

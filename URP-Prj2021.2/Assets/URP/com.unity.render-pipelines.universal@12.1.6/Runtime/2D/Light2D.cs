@@ -236,14 +236,7 @@ namespace UnityEngine.Rendering.Universal
         /// The lights current intensity
         /// </summary>
         public float intensity { get => m_Intensity; set => m_Intensity = value; }
-
-        /// <summary>
-        /// The lights current intensity
-        /// </summary>
-        ///
-        [Obsolete]
-        public float volumeOpacity => m_LightVolumeIntensity;
-
+        
         /// <summary>
         /// Controls the visibility of the light's volume
         /// </summary>
@@ -260,10 +253,7 @@ namespace UnityEngine.Rendering.Universal
         /// Controls the brightness and distance of the fall off (edge) of the light
         /// </summary>
         public float falloffIntensity => m_FalloffIntensity;
-
-        [Obsolete]
-        public bool alphaBlendOnOverlap { get { return m_OverlapOperation == OverlapOperation.AlphaBlend; } }
-
+        
         /// <summary>
         /// Returns the overlap operation mode.
         /// </summary>

@@ -48,14 +48,7 @@ namespace UnityEngine.Rendering.Universal
             get => m_PointLightOuterRadius;
             set => m_PointLightOuterRadius = value;
         }
-
-        [Obsolete("pointLightDistance has been changed to normalMapDistance", true)]
-        public float pointLightDistance => m_NormalMapDistance;
-
-        [Obsolete("pointLightQuality has been changed to normalMapQuality", true)]
-        public NormalMapQuality pointLightQuality => m_NormalMapQuality;
-
-
+        
         internal bool isPointLight => m_LightType == LightType.Point;
     }
 }

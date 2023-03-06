@@ -184,13 +184,7 @@ namespace UnityEditor
         // General Functions              //
         ////////////////////////////////////
         #region GeneralFunctions
-
-        [Obsolete("MaterialChanged has been renamed ValidateMaterial", false)]
-        public virtual void MaterialChanged(Material material)
-        {
-            ValidateMaterial(material);
-        }
-
+        
         public virtual void FindProperties(MaterialProperty[] properties)
         {
             var material = materialEditor?.target as Material;
@@ -333,10 +327,7 @@ namespace UnityEditor
             if (queueOffsetProp != null)
                 materialEditor.IntSliderShaderProperty(queueOffsetProp, -queueOffsetRange, queueOffsetRange, Styles.queueSlider);
         }
-
-        [Obsolete("DrawAdditionalFoldouts has been deprecated. Use FillAdditionalFoldouts instead, and materialScopesList.RegisterHeaderScope", false)]
-        public virtual void DrawAdditionalFoldouts(Material material) { }
-
+        
         public virtual void FillAdditionalFoldouts(MaterialHeaderScopeList materialScopesList) { }
 
         public virtual void DrawBaseProperties(Material material)
