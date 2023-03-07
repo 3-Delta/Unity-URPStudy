@@ -177,8 +177,7 @@ namespace UnityEditor.Rendering.Universal
                 if (forwardRendererData != null && forwardRendererData.postProcessData == null)
                     return true;
 
-                var renderer2DData = rendererData as UnityEngine.Rendering.Universal.Renderer2DData;
-                return renderer2DData != null && renderer2DData.postProcessData == null;
+                return false;
             }
 
             static void DrawerRenderingAntialiasing(UniversalRenderPipelineSerializedCamera p, Editor owner)
