@@ -121,13 +121,18 @@ namespace UnityEngine.Rendering.Universal
             {
                 Matrix4x4 gpuProjectionMatrix = cameraData.GetGPUProjectionMatrix();
                 Matrix4x4 viewAndProjectionMatrix = gpuProjectionMatrix * viewMatrix;
+                
                 Matrix4x4 inverseViewMatrix = Matrix4x4.Inverse(viewMatrix);
                 Matrix4x4 inverseProjectionMatrix = Matrix4x4.Inverse(gpuProjectionMatrix);
+                
+                // v * p 不是 p * v
                 Matrix4x4 inverseViewProjection = inverseViewMatrix * inverseProjectionMatrix;
 
                 // There's an inconsistency in handedness between unity_matrixV and unity_WorldToCamera
                 // Unity changes the handedness of unity_WorldToCamera (see Camera::CalculateMatrixShaderProps)
                 // we will also change it here to avoid breaking existing shaders. (case 1257518)
+                
+                // unity_matrixV 和 unity_WorldToCamera翻转z轴
                 Matrix4x4 worldToCameraMatrix = Matrix4x4.Scale(new Vector3(1.0f, 1.0f, -1.0f)) * viewMatrix;
                 Matrix4x4 cameraToWorldMatrix = worldToCameraMatrix.inverse;
                 cmd.SetGlobalMatrix(ShaderPropertyId.worldToCameraMatrix, worldToCameraMatrix);
@@ -336,25 +341,24 @@ namespace UnityEngine.Rendering.Universal
 
         /// <summary>
         /// Returns the camera color target for this renderer.
-        /// It's only valid to call cameraColorTarget in the scope of <c>ScriptableRenderPass</c>.
+        /// It's only valid to call colorRT in the scope of <c>ScriptableRenderPass</c>.
         /// <seealso cref="ScriptableRenderPass"/>.
         /// </summary>
-        public RenderTargetIdentifier cameraColorTarget
+        public RenderTargetIdentifier colorRT
         {
             get
             {
                 if (!(m_IsPipelineExecuting || isCameraColorTargetValid))
                 {
-                    Debug.LogWarning("You can only call cameraColorTarget inside the scope of a ScriptableRenderPass. Otherwise the pipeline camera target texture might have not been created or might have already been disposed.");
+                    Debug.LogWarning("You can only call colorRT inside the scope of a ScriptableRenderPass. Otherwise the pipeline camera target texture might have not been created or might have already been disposed.");
                     // TODO: Ideally we should return an error texture (BuiltinRenderTextureType.None?)
                     // but this might break some existing content, so we return the pipeline texture in the hope it gives a "soft" upgrade to users.
                 }
 
-                return m_CameraColorTarget;
+                return this.m_ColorRT;
             }
         }
-
-
+        
         /// <summary>
         /// Returns the frontbuffer color target. Returns 0 if not implemented by the renderer.
         /// It's only valid to call GetCameraColorFrontBuffer in the scope of <c>ScriptableRenderPass</c>.
@@ -368,21 +372,21 @@ namespace UnityEngine.Rendering.Universal
 
         /// <summary>
         /// Returns the camera depth target for this renderer.
-        /// It's only valid to call cameraDepthTarget in the scope of <c>ScriptableRenderPass</c>.
+        /// It's only valid to call depthRT in the scope of <c>ScriptableRenderPass</c>.
         /// <seealso cref="ScriptableRenderPass"/>.
         /// </summary>
-        public RenderTargetIdentifier cameraDepthTarget
+        public RenderTargetIdentifier depthRT
         {
             get
             {
                 if (!m_IsPipelineExecuting)
                 {
-                    Debug.LogWarning("You can only call cameraDepthTarget inside the scope of a ScriptableRenderPass. Otherwise the pipeline camera target texture might have not been created or might have already been disposed.");
+                    Debug.LogWarning("You can only call depthRT inside the scope of a ScriptableRenderPass. Otherwise the pipeline camera target texture might have not been created or might have already been disposed.");
                     // TODO: Ideally we should return an error texture (BuiltinRenderTextureType.None?)
                     // but this might break some existing content, so we return the pipeline texture in the hope it gives a "soft" upgrade to users.
                 }
 
-                return m_CameraDepthTarget;
+                return this.m_DepthRT;
             }
         }
 
@@ -415,7 +419,10 @@ namespace UnityEngine.Rendering.Universal
         /// <see cref="unsupportedGraphicsDeviceTypes"/>
         /// </summary>
         public GraphicsDeviceType[] unsupportedGraphicsDeviceTypes { get; set; } = new GraphicsDeviceType[0];
+        private StoreActionsOptimization m_StoreActionsOptimizationSetting = StoreActionsOptimization.Auto;
+        private static bool m_UseOptimizedStoreActions = false;
 
+        const int k_RenderPassBlockCount = 4;
         static class RenderPassBlock
         {
             // Executes render passes that are inputs to the main rendering
@@ -431,19 +438,11 @@ namespace UnityEngine.Rendering.Universal
             public static readonly int AfterRendering = 3;
         }
 
-        private StoreActionsOptimization m_StoreActionsOptimizationSetting = StoreActionsOptimization.Auto;
-        private static bool m_UseOptimizedStoreActions = false;
-
-        const int k_RenderPassBlockCount = 4;
-
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
         List<ScriptableRendererFeature> m_RendererFeatures = new List<ScriptableRendererFeature>(10);
-        RenderTargetIdentifier m_CameraColorTarget;
-        RenderTargetIdentifier m_CameraDepthTarget;
-        RenderTargetIdentifier m_CameraResolveTarget;
-
-        bool m_FirstTimeCameraColorTargetIsBound = true; // flag used to track when m_CameraColorTarget should be cleared (if necessary), as well as other special actions only performed the first time m_CameraColorTarget is bound as a render target
-        bool m_FirstTimeCameraDepthTargetIsBound = true; // flag used to track when m_CameraDepthTarget should be cleared (if necessary), the first time m_CameraDepthTarget is bound as a render target
+        
+        bool m_FirstTimeCameraColorTargetIsBound = true; // flag used to track when m_ColorRT should be cleared (if necessary), as well as other special actions only performed the first time m_ColorRT is bound as a render target
+        bool m_FirstTimeCameraDepthTargetIsBound = true; // flag used to track when m_DepthRT should be cleared (if necessary), the first time m_DepthRT is bound as a render target
 
         // The pipeline can only guarantee the camera target texture are valid when the pipeline is executing.
         // Trying to access the camera target before or after might be that the pipeline texture have already been disposed.
@@ -455,8 +454,16 @@ namespace UnityEngine.Rendering.Universal
         // To enable it - override SupportsNativeRenderPass method in the feature and return true
         internal bool disableNativeRenderPassInFeatures = false;
 
+        // 介绍说是多pass需要切换RT，而native会把多pass修改为一个pass下的多个subpass,就不需要切换RT了，需要vulkan和metal支持
+        // https://www.bilibili.com/video/BV1sG411p737/?spm_id_from=333.788&vd_source=5c9f5bd891aee351c325bcf632b5550f
         internal bool useRenderPassEnabled = false;
-        static RenderTargetIdentifier[] m_ActiveColorAttachments = new RenderTargetIdentifier[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        
+        RenderTargetIdentifier m_ColorRT;
+        RenderTargetIdentifier m_DepthRT;
+        
+        RenderTargetIdentifier m_CameraResolveTarget;
+        
+        static RenderTargetIdentifier[] m_ActiveColorAttachments = new RenderTargetIdentifier[] { 0, 0, 0, 0, 0, 0, 0, 0, };
         static RenderTargetIdentifier m_ActiveDepthAttachment;
 
         private static RenderBufferStoreAction[] m_ActiveColorStoreActions = new RenderBufferStoreAction[]
@@ -556,21 +563,21 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="depthTarget">Camera depth target. Pass BuiltinRenderTextureType.CameraTarget if color has depth or rendering to backbuffer.</param>
         public void ConfigureCameraTarget(RenderTargetIdentifier colorTarget, RenderTargetIdentifier depthTarget)
         {
-            m_CameraColorTarget = colorTarget;
-            m_CameraDepthTarget = depthTarget;
+            this.m_ColorRT = colorTarget;
+            this.m_DepthRT = depthTarget;
         }
 
         internal void ConfigureCameraTarget(RenderTargetIdentifier colorTarget, RenderTargetIdentifier depthTarget, RenderTargetIdentifier resolveTarget)
         {
-            m_CameraColorTarget = colorTarget;
-            m_CameraDepthTarget = depthTarget;
+            this.m_ColorRT = colorTarget;
+            this.m_DepthRT = depthTarget;
             m_CameraResolveTarget = resolveTarget;
         }
 
         // This should be removed when early camera color target assignment is removed.
         internal void ConfigureCameraColorTarget(RenderTargetIdentifier colorTarget)
         {
-            m_CameraColorTarget = colorTarget;
+            this.m_ColorRT = colorTarget;
         }
 
         /// <summary>
@@ -679,7 +686,9 @@ namespace UnityEngine.Rendering.Universal
                     using var profScope = new ProfilingScope(null, Profiling.RenderBlock.beforeRendering);
                     ExecuteBlock(RenderPassBlock.BeforeRendering, in renderBlocks, context, ref renderingData);
                 }
-
+                // 上面绘制shadowmap等camera之前的操作
+                
+                // 设置camera相关数据给GPU
                 using (new ProfilingScope(null, Profiling.setupCamera))
                 {
                     // This is still required because of the following reasons:
@@ -744,6 +753,7 @@ namespace UnityEngine.Rendering.Universal
                 // Draw Gizmos...
                 if (drawGizmos)
                 {
+                    // 后处理之前的Gizmos
                     DrawGizmos(context, camera, GizmoSubset.PreImageEffects);
                 }
 
@@ -760,6 +770,7 @@ namespace UnityEngine.Rendering.Universal
 
                 if (drawGizmos)
                 {
+                    // 后处理之后的Gizmos
                     DrawGizmos(context, camera, GizmoSubset.PostImageEffects);
                 }
 
@@ -927,8 +938,8 @@ namespace UnityEngine.Rendering.Universal
             m_FirstTimeCameraColorTargetIsBound = cameraType == CameraRenderType.Base;
             m_FirstTimeCameraDepthTargetIsBound = true;
 
-            m_CameraColorTarget = BuiltinRenderTextureType.CameraTarget;
-            m_CameraDepthTarget = BuiltinRenderTextureType.CameraTarget;
+            this.m_ColorRT = BuiltinRenderTextureType.CameraTarget;
+            this.m_DepthRT = BuiltinRenderTextureType.CameraTarget;
         }
 
         void ExecuteBlock(int blockIndex, in RenderBlocks renderBlocks,
@@ -1009,7 +1020,7 @@ namespace UnityEngine.Rendering.Universal
                 bool needCustomCameraColorClear = false;
                 bool needCustomCameraDepthClear = false;
 
-                int cameraColorTargetIndex = RenderingUtils.IndexOf(renderPass.colorAttachments, m_CameraColorTarget);
+                int cameraColorTargetIndex = RenderingUtils.IndexOf(renderPass.colorAttachments, this.m_ColorRT);
                 if (cameraColorTargetIndex != -1 && (m_FirstTimeCameraColorTargetIsBound))
                 {
                     m_FirstTimeCameraColorTargetIsBound = false; // register that we did clear the camera target the first time it was bound
@@ -1026,12 +1037,12 @@ namespace UnityEngine.Rendering.Universal
                 }
 
                 // Note: if we have to give up the assumption that no depthTarget can be included in the MRT colorAttachments, we might need something like this:
-                // int cameraTargetDepthIndex = IndexOf(renderPass.colorAttachments, m_CameraDepthTarget);
+                // int cameraTargetDepthIndex = IndexOf(renderPass.colorAttachments, m_DepthRT);
                 // if( !renderTargetAlreadySet && cameraTargetDepthIndex != -1 && m_FirstTimeCameraDepthTargetIsBound)
                 // { ...
                 // }
 
-                if (renderPass.depthAttachment == m_CameraDepthTarget && m_FirstTimeCameraDepthTargetIsBound)
+                if (renderPass.depthAttachment == this.m_DepthRT && m_FirstTimeCameraDepthTargetIsBound)
                 {
                     m_FirstTimeCameraDepthTargetIsBound = false;
                     needCustomCameraDepthClear = (cameraClearFlag & ClearFlag.DepthStencil) != (renderPass.clearFlag & ClearFlag.DepthStencil);
@@ -1040,7 +1051,7 @@ namespace UnityEngine.Rendering.Universal
                 // Perform all clear operations needed. ----------------
                 // We try to minimize calls to SetRenderTarget().
 
-                // We get here only if cameraColorTarget needs to be handled separately from the rest of the color attachments.
+                // We get here only if colorRT needs to be handled separately from the rest of the color attachments.
                 if (needCustomCameraColorClear)
                 {
                     // Clear camera color render-target separately from the rest of the render-targets.
@@ -1050,12 +1061,12 @@ namespace UnityEngine.Rendering.Universal
 
                     if ((renderPass.clearFlag & ClearFlag.Color) != 0)
                     {
-                        uint otherTargetsCount = RenderingUtils.CountDistinct(renderPass.colorAttachments, m_CameraColorTarget);
+                        uint otherTargetsCount = RenderingUtils.CountDistinct(renderPass.colorAttachments, this.m_ColorRT);
                         var nonCameraAttachments = m_TrimmedColorAttachmentCopies[otherTargetsCount];
                         int writeIndex = 0;
                         for (int readIndex = 0; readIndex < renderPass.colorAttachments.Length; ++readIndex)
                         {
-                            if (renderPass.colorAttachments[readIndex] != m_CameraColorTarget && renderPass.colorAttachments[readIndex] != 0)
+                            if (renderPass.colorAttachments[readIndex] != this.m_ColorRT && renderPass.colorAttachments[readIndex] != 0)
                             {
                                 nonCameraAttachments[writeIndex] = renderPass.colorAttachments[readIndex];
                                 ++writeIndex;
@@ -1065,11 +1076,11 @@ namespace UnityEngine.Rendering.Universal
                         if (writeIndex != otherTargetsCount)
                             Debug.LogError("writeIndex and otherTargetsCount values differed. writeIndex:" + writeIndex + " otherTargetsCount:" + otherTargetsCount);
                         if (!IsRenderPassEnabled(renderPass) || !cameraData.isRenderPassSupportedCamera)
-                            SetRenderTarget(cmd, nonCameraAttachments, m_CameraDepthTarget, ClearFlag.Color, renderPass.clearColor);
+                            SetRenderTarget(cmd, nonCameraAttachments, this.m_DepthRT, ClearFlag.Color, renderPass.clearColor);
                     }
                 }
 
-                // Bind all attachments, clear color only if there was no custom behaviour for cameraColorTarget, clear depth as needed.
+                // Bind all attachments, clear color only if there was no custom behaviour for colorRT, clear depth as needed.
                 ClearFlag finalClearFlag = ClearFlag.None;
                 finalClearFlag |= needCustomCameraDepthClear ? (cameraClearFlag & ClearFlag.DepthStencil) : (renderPass.clearFlag & ClearFlag.DepthStencil);
                 finalClearFlag |= needCustomCameraColorClear ? (IsRenderPassEnabled(renderPass) ? (cameraClearFlag & ClearFlag.Color) : 0) : (renderPass.clearFlag & ClearFlag.Color);
@@ -1090,7 +1101,7 @@ namespace UnityEngine.Rendering.Universal
 
                         if (!IsRenderPassEnabled(renderPass) || !cameraData.isRenderPassSupportedCamera)
                         {
-                            RenderTargetIdentifier depthAttachment = m_CameraDepthTarget;
+                            RenderTargetIdentifier depthAttachment = this.m_DepthRT;
 
                             if (renderPass.overrideCameraTarget)
                             {
@@ -1135,14 +1146,14 @@ namespace UnityEngine.Rendering.Universal
                         return;
 
                     // Otherwise default is the pipeline camera target.
-                    passColorAttachment = m_CameraColorTarget;
-                    passDepthAttachment = m_CameraDepthTarget;
+                    passColorAttachment = this.m_ColorRT;
+                    passDepthAttachment = this.m_DepthRT;
                 }
 
                 ClearFlag finalClearFlag = ClearFlag.None;
                 Color finalClearColor;
 
-                if (passColorAttachment == m_CameraColorTarget && (m_FirstTimeCameraColorTargetIsBound))
+                if (passColorAttachment == this.m_ColorRT && (m_FirstTimeCameraColorTargetIsBound))
                 {
                     m_FirstTimeCameraColorTargetIsBound = false; // register that we did clear the camera target the first time it was bound
 
@@ -1151,7 +1162,7 @@ namespace UnityEngine.Rendering.Universal
 
                     if (m_FirstTimeCameraDepthTargetIsBound)
                     {
-                        // m_CameraColorTarget can be an opaque pointer to a RenderTexture with depth-surface.
+                        // m_ColorRT can be an opaque pointer to a RenderTexture with depth-surface.
                         // We cannot infer this information here, so we must assume both camera color and depth are first-time bound here (this is the legacy behaviour).
                         m_FirstTimeCameraDepthTargetIsBound = false;
                         finalClearFlag |= (cameraClearFlag & ClearFlag.DepthStencil);
@@ -1163,14 +1174,14 @@ namespace UnityEngine.Rendering.Universal
                     finalClearColor = renderPass.clearColor;
                 }
 
-                // Condition (m_CameraDepthTarget!=BuiltinRenderTextureType.CameraTarget) below prevents m_FirstTimeCameraDepthTargetIsBound flag from being reset during non-camera passes (such as Color Grading LUT). This ensures that in those cases, cameraDepth will actually be cleared during the later camera pass.
-                if ((m_CameraDepthTarget != BuiltinRenderTextureType.CameraTarget) && (passDepthAttachment == m_CameraDepthTarget || passColorAttachment == m_CameraDepthTarget) && m_FirstTimeCameraDepthTargetIsBound)
+                // Condition (m_DepthRT!=BuiltinRenderTextureType.CameraTarget) below prevents m_FirstTimeCameraDepthTargetIsBound flag from being reset during non-camera passes (such as Color Grading LUT). This ensures that in those cases, cameraDepth will actually be cleared during the later camera pass.
+                if ((this.m_DepthRT != BuiltinRenderTextureType.CameraTarget) && (passDepthAttachment == this.m_DepthRT || passColorAttachment == this.m_DepthRT) && m_FirstTimeCameraDepthTargetIsBound)
                 {
                     m_FirstTimeCameraDepthTargetIsBound = false;
 
                     finalClearFlag |= (cameraClearFlag & ClearFlag.DepthStencil);
 
-                    // finalClearFlag |= (cameraClearFlag & ClearFlag.Color);  // <- m_CameraDepthTarget is never a color-surface, so no need to add this here.
+                    // finalClearFlag |= (cameraClearFlag & ClearFlag.Color);  // <- m_DepthRT is never a color-surface, so no need to add this here.
                 }
                 else
                     finalClearFlag |= (renderPass.clearFlag & ClearFlag.DepthStencil);

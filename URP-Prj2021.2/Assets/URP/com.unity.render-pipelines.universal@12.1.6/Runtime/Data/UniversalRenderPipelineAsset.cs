@@ -76,8 +76,8 @@ namespace UnityEngine.Rendering.Universal
     public enum LightRenderingMode
     {
         Disabled = 0,
-        PerVertex = 2,
         PerPixel = 1,
+        PerVertex = 2,
     }
 
     public enum ShaderVariantLogLevel
@@ -966,6 +966,7 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Set to true to enable a conservative method for calculating the size and position of the minimal enclosing sphere around the frustum cascade corner points for shadow culling.
         /// </summary>
+        /// 计算最小包围球
         public bool conservativeEnclosingSphere
         {
             get { return m_ConservativeEnclosingSphere; }

@@ -201,10 +201,10 @@ namespace UnityEngine.Rendering.Universal
 
             if (renderer != null)
             {
-                bool renderingToBackBufferTarget = renderer.cameraColorTarget == BuiltinRenderTextureType.CameraTarget;
+                bool renderingToBackBufferTarget = renderer.colorRT == BuiltinRenderTextureType.CameraTarget;
 #if ENABLE_VR && ENABLE_XR_MODULE
                 if (xr.enabled)
-                    renderingToBackBufferTarget |= renderer.cameraColorTarget == xr.renderTarget && !xr.renderTargetIsRenderTexture;
+                    renderingToBackBufferTarget |= renderer.colorRT == xr.renderTarget && !xr.renderTargetIsRenderTexture;
 #endif
                 bool renderingToTexture = !renderingToBackBufferTarget || targetTexture != null;
                 return SystemInfo.graphicsUVStartsAtTop && renderingToTexture;
@@ -297,6 +297,8 @@ namespace UnityEngine.Rendering.Universal
         public uint unused;
     }
 
+    // punctual lights 具有实际位置的光
+    // 点光（point light）和聚光灯（spotlight）是精确光（punctual lights）的两种不同形式
     // Actual point/spot light data passed to the deferred shaders.
     public struct PunctualLightData
     {
@@ -604,6 +606,29 @@ namespace UnityEngine.Rendering.Universal
 
             return desc;
         }
+
+        #region utils
+        public static bool IsMobile() {
+            return GraphicsSettings.HasShaderDefine(BuiltinShaderDefine.SHADER_API_MOBILE);
+        }
+
+        public static bool IsSupportBitwise(GraphicsDeviceType type) {
+            // GLES2 does not support bitwise operations.
+            return type != GraphicsDeviceType.OpenGLES2;
+        }
+        
+        public static bool IsSceneViewCamera(Camera camera) { 
+            return camera.cameraType == CameraType.SceneView;
+        } 
+        
+        public static bool IsPreviewCamera(Camera camera) { 
+            return camera.cameraType == CameraType.Preview;
+        } 
+        
+        public static bool IsGameViewCamera(Camera camera) { 
+            return camera.cameraType == CameraType.Game || camera.cameraType == CameraType.VR;
+        }
+        #endregion
 
         private static Lightmapping.RequestLightsDelegate lightsDelegate = (Light[] requests, NativeArray<LightDataGI> lightsOutput) =>
         {

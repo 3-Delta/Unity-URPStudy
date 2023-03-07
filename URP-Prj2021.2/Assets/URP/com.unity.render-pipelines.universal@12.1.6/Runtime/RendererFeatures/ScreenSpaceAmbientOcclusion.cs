@@ -321,7 +321,7 @@ namespace UnityEngine.Rendering.Universal
                 cmd.GetTemporaryRT(s_SSAOTextureFinalID, m_FinalDescriptor, FilterMode.Bilinear);
 
                 // Configure targets and clear color
-                ConfigureTarget(m_CurrentSettings.AfterOpaque ? m_Renderer.cameraColorTarget : s_SSAOTexture2ID);
+                ConfigureTarget(m_CurrentSettings.AfterOpaque ? m_Renderer.colorRT : s_SSAOTexture2ID);
                 ConfigureClear(ClearFlag.None, Color.white);
             }
 
@@ -360,9 +360,9 @@ namespace UnityEngine.Rendering.Universal
                     // If true, SSAO pass is inserted after opaque pass and is expected to modulate lighting result now.
                     if (m_CurrentSettings.AfterOpaque)
                     {
-                        // This implicitly also bind depth attachment. Explicitly binding m_Renderer.cameraDepthTarget does not work.
+                        // This implicitly also bind depth attachment. Explicitly binding m_Renderer.depthRT does not work.
                         cmd.SetRenderTarget(
-                            m_Renderer.cameraColorTarget,
+                            m_Renderer.colorRT,
                             RenderBufferLoadAction.Load,
                             RenderBufferStoreAction.Store
                         );

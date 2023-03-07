@@ -11,18 +11,4 @@ namespace UnityEngine.Rendering.Universal
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual void FrameCleanup(CommandBuffer cmd) => OnCameraCleanup(cmd);
     }
-    
-    namespace Internal
-    {
-        public partial class AdditionalLightsShadowCasterPass
-        {
-        }
-    }
-    public partial class UniversalRenderPipelineAsset
-    {
-    }
-
-    public abstract partial class ScriptableRenderer
-    {
-    }
 }

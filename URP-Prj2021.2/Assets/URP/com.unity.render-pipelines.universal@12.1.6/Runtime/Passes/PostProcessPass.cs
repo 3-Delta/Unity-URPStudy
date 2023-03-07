@@ -360,7 +360,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             // GetDestination() instead
             bool tempTargetUsed = false;
             bool tempTarget2Used = false;
-            RenderTargetIdentifier source = m_UseSwapBuffer ? renderer.cameraColorTarget : m_Source;
+            RenderTargetIdentifier source = m_UseSwapBuffer ? renderer.colorRT : m_Source;
             RenderTargetIdentifier destination = m_UseSwapBuffer ? renderer.GetCameraColorFrontBuffer(cmd) : -1;
 
             RenderTargetIdentifier GetSource() => source;
@@ -400,7 +400,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                     }
 
                     r.SwapColorBuffer(cmd);
-                    source = r.cameraColorTarget;
+                    source = r.colorRT;
                     destination = r.GetCameraColorFrontBuffer(cmd);
                 }
                 else
@@ -1406,7 +1406,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             }
             else if (m_Source == cameraData.renderer.GetCameraColorFrontBuffer(cmd))
             {
-                m_Source = cameraData.renderer.cameraColorTarget;
+                m_Source = cameraData.renderer.colorRT;
             }
 
             cmd.SetGlobalTexture(ShaderPropertyId.sourceTex, m_Source);

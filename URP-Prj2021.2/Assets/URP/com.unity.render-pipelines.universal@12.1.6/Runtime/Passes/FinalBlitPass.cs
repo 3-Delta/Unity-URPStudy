@@ -50,7 +50,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
             if (m_Source == cameraData.renderer.GetCameraColorFrontBuffer(cmd))
             {
-                m_Source = renderingData.cameraData.renderer.cameraColorTarget;
+                m_Source = renderingData.cameraData.renderer.colorRT;
             }
 
             using (new ProfilingScope(cmd, ProfilingSampler.Get(URPProfileId.FinalBlit)))

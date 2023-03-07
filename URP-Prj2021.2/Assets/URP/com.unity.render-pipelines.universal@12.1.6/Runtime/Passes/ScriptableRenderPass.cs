@@ -526,7 +526,7 @@ namespace UnityEngine.Rendering.Universal
         {
             var renderer = data.cameraData.renderer;
 
-            Blit(cmd, renderer.cameraColorTarget, renderer.GetCameraColorFrontBuffer(cmd), material, passIndex);
+            Blit(cmd, renderer.colorRT, renderer.GetCameraColorFrontBuffer(cmd), material, passIndex);
             renderer.SwapColorBuffer(cmd);
         }
 

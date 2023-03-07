@@ -16,6 +16,8 @@ namespace UnityEngine.Rendering.Universal
 
     /// <summary>
     /// When the Universal Renderer should use Depth Priming in Forward mode.
+    /// 就是z-prepass, 两个pass， 第一个绘制depth, 第二个绘制==depth的color
+    /// https://www.bilibili.com/video/BV1XS4y1S7fw/?spm_id_from=444.42.list.card_archive.click&vd_source=5c9f5bd891aee351c325bcf632b5550f
     /// </summary>
     public enum DepthPrimingMode
     {
@@ -892,10 +894,12 @@ namespace UnityEngine.Rendering.Universal
             bool isShadowDistanceZero = Mathf.Approximately(cameraData.maxShadowDistance, 0.0f);
             if (isShadowCastingDisabled || isShadowDistanceZero)
             {
+                // 不绘制shadowmap
                 cullingParameters.cullingOptions &= ~CullingOptions.ShadowCasters;
             }
 
             if (this.actualRenderingMode == RenderingMode.Deferred)
+                // 延迟渲染不限制灯光数量
                 cullingParameters.maximumVisibleLights = 0xFFFF;
             else
             {
@@ -908,8 +912,8 @@ namespace UnityEngine.Rendering.Universal
             }
             cullingParameters.shadowDistance = cameraData.maxShadowDistance;
 
+            // cascade 计算最小包围球
             cullingParameters.conservativeEnclosingSphere = UniversalRenderPipeline.asset.conservativeEnclosingSphere;
-
             cullingParameters.numIterationsEnclosingSphere = UniversalRenderPipeline.asset.numIterationsEnclosingSphere;
         }
 

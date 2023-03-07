@@ -86,7 +86,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             {
                 ConfigureTarget(
                     new RenderTargetIdentifier(normalHandle.Identifier(), 0, CubemapFace.Unknown, -1),
-                    new RenderTargetIdentifier(renderingData.cameraData.renderer.cameraDepthTarget, 0, CubemapFace.Unknown, -1)
+                    new RenderTargetIdentifier(renderingData.cameraData.renderer.depthRT, 0, CubemapFace.Unknown, -1)
                 );
             }
             else
