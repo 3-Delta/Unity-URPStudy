@@ -112,7 +112,7 @@ public class KeepFrameFeature : ScriptableRendererFeature
         m_OldFrameHandle.Init("_OldFrameRenderTarget");
         m_DrawOldFame.ConfigureClear(ClearFlag.None, Color.red);
 
-        m_CopyFrame.Setup(renderer.cameraColorTarget, m_OldFrameHandle);
+        m_CopyFrame.Setup(renderer.colorRT, m_OldFrameHandle);
         renderer.EnqueuePass(m_CopyFrame);
 
         m_DrawOldFame.Setup(settings.displayMaterial, m_OldFrameHandle, String.IsNullOrEmpty(settings.textureName) ? "_FrameCopyTex" : settings.textureName);
