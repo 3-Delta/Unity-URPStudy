@@ -71,10 +71,13 @@ namespace UnityEngine.Rendering.Universal
         public int maxPerObjectAdditionalLightsCount;
         public NativeArray<VisibleLight> visibleLights;
         internal NativeArray<int> originalIndices;
+        
         public bool shadeAdditionalLightsPerVertex;
         public bool supportsMixedLighting;
+        
         public bool reflectionProbeBoxProjection;
         public bool reflectionProbeBlending;
+        
         public bool supportsLightLayers;
 
         /// <summary>
@@ -340,6 +343,7 @@ namespace UnityEngine.Rendering.Universal
 
         public static readonly int screenSize = Shader.PropertyToID("_ScreenSize");
 
+        // 和unity_WorldToCamera在z是反转的
         public static readonly int viewMatrix = Shader.PropertyToID("unity_MatrixV");
         public static readonly int projectionMatrix = Shader.PropertyToID("glstate_matrix_projection");
         public static readonly int viewAndProjectionMatrix = Shader.PropertyToID("unity_MatrixVP");
@@ -606,30 +610,7 @@ namespace UnityEngine.Rendering.Universal
 
             return desc;
         }
-
-        #region utils
-        public static bool IsMobile() {
-            return GraphicsSettings.HasShaderDefine(BuiltinShaderDefine.SHADER_API_MOBILE);
-        }
-
-        public static bool IsSupportBitwise(GraphicsDeviceType type) {
-            // GLES2 does not support bitwise operations.
-            return type != GraphicsDeviceType.OpenGLES2;
-        }
         
-        public static bool IsSceneViewCamera(Camera camera) { 
-            return camera.cameraType == CameraType.SceneView;
-        } 
-        
-        public static bool IsPreviewCamera(Camera camera) { 
-            return camera.cameraType == CameraType.Preview;
-        } 
-        
-        public static bool IsGameViewCamera(Camera camera) { 
-            return camera.cameraType == CameraType.Game || camera.cameraType == CameraType.VR;
-        }
-        #endregion
-
         private static Lightmapping.RequestLightsDelegate lightsDelegate = (Light[] requests, NativeArray<LightDataGI> lightsOutput) =>
         {
             LightDataGI lightData = new LightDataGI();
@@ -833,11 +814,13 @@ namespace UnityEngine.Rendering.Universal
             VisibleLight lightData = lights[lightIndex];
             if (lightData.lightType == LightType.Directional)
             {
+                // 方向
                 Vector4 dir = -lightData.localToWorldMatrix.GetColumn(2);
                 lightPos = new Vector4(dir.x, dir.y, dir.z, 0.0f);
             }
             else
             {
+                // 位置
                 Vector4 pos = lightData.localToWorldMatrix.GetColumn(3);
                 lightPos = new Vector4(pos.x, pos.y, pos.z, 1.0f);
             }

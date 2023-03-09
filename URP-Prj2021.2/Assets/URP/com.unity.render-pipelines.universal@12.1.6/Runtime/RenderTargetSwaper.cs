@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace UnityEngine.Rendering.Universal.Internal
 {
     //NOTE: This class is meant to be removed when RTHandles get implemented in urp
-    internal sealed class RenderTargetBufferSystem
+    internal sealed class RenderTargetSwaper
     {
         struct SwapBuffer
         {
@@ -16,18 +16,23 @@ namespace UnityEngine.Rendering.Universal.Internal
             public int name;
             public int msaa;
         }
-        SwapBuffer m_A, m_B;
+
+        SwapBuffer m_A;
+        SwapBuffer m_B;
         static bool m_AisBackBuffer = true;
 
         static RenderTextureDescriptor m_Desc;
+        
         FilterMode m_FilterMode;
         bool m_AllowMSAA = true;
-        bool m_RTisAllocated = false;
+        
+        bool m_isRTAllocated = false;
 
+        // 一般都是取 backBuffer
         SwapBuffer backBuffer { get { return m_AisBackBuffer ? m_A : m_B; } }
         SwapBuffer frontBuffer { get { return m_AisBackBuffer ? m_B : m_A; } }
 
-        public RenderTargetBufferSystem(string name)
+        public RenderTargetSwaper(string name)
         {
             m_A.name = Shader.PropertyToID(name + "A");
             m_B.name = Shader.PropertyToID(name + "B");
@@ -42,14 +47,14 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public RenderTargetHandle GetBackBuffer(CommandBuffer cmd)
         {
-            if (!m_RTisAllocated)
+            if (!this.m_isRTAllocated)
                 Initialize(cmd);
             return backBuffer.rt;
         }
 
         public RenderTargetHandle GetFrontBuffer(CommandBuffer cmd)
         {
-            if (!m_RTisAllocated)
+            if (!this.m_isRTAllocated)
                 Initialize(cmd);
 
             int pipelineMSAA = m_Desc.msaaSamples;
@@ -103,7 +108,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             //descB.depthBufferBits = 0;
             cmd.GetTemporaryRT(m_B.name, descB, m_FilterMode);
 
-            m_RTisAllocated = true;
+            this.m_isRTAllocated = true;
         }
 
         public void Clear(CommandBuffer cmd)

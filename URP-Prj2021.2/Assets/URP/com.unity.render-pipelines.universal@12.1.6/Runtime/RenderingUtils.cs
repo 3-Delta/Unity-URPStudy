@@ -88,9 +88,11 @@ namespace UnityEngine.Rendering.Universal
         internal static bool SupportsLightLayers(GraphicsDeviceType type)
         {
             // GLES2 does not support bitwise operations.
+            // opengl2不支持bit操作
             return type != GraphicsDeviceType.OpenGLES2;
         }
 
+        // 粉红色shader
         static Material s_ErrorMaterial;
         static Material errorMaterial
         {
@@ -217,6 +219,8 @@ namespace UnityEngine.Rendering.Universal
             RenderBufferStoreAction depthStoreAction = RenderBufferStoreAction.Store)
         {
             cmd.SetGlobalTexture(ShaderPropertyId.sourceTex, source);
+            // blit默认是用一个全屏的Mesh绘制
+            // DrawProcedural可以自由绘制，比如用一个大三角形绘制，使用DrawProcedural方法需要编写着色器和顶点数据
             if (useDrawProcedural)
             {
                 Vector4 scaleBias = new Vector4(1, 1, 0, 0);
@@ -249,6 +253,9 @@ namespace UnityEngine.Rendering.Universal
             DrawingSettings errorSettings = new DrawingSettings(m_LegacyShaderPassNames[0], sortingSettings)
             {
                 perObjectData = PerObjectData.None,
+                
+                // 覆盖原始的material，使用errorMaterial
+                // 正常的overrideMaterial估计也是这样使用的
                 overrideMaterial = errorMaterial,
                 overrideMaterialPassIndex = 0
             };
@@ -259,7 +266,10 @@ namespace UnityEngine.Rendering.Universal
         }
 
         // Caches render texture format support. SystemInfo.SupportsRenderTextureFormat and IsFormatSupported allocate memory due to boxing.
+        // 缓存支持的RT格式 SystemInfo.SupportsRenderTextureFormat
         static Dictionary<RenderTextureFormat, bool> m_RenderTextureFormatSupport = new Dictionary<RenderTextureFormat, bool>();
+        
+        // 缓存  纹理格式和是否支持的操作
         static Dictionary<GraphicsFormat, Dictionary<FormatUsage, bool>> m_GraphicsFormatSupport = new Dictionary<GraphicsFormat, Dictionary<FormatUsage, bool>>();
 
         internal static void ClearSystemInfoCache()
@@ -353,6 +363,7 @@ namespace UnityEngine.Rendering.Universal
         /// Return true if colorBuffers is an actual MRT setup
         /// </summary>
         /// <param name="colorBuffers"></param>
+        /// 多于一个ColorAttachment, 属于MRT
         /// <returns></returns>
         internal static bool IsMRT(RenderTargetIdentifier[] colorBuffers)
         {

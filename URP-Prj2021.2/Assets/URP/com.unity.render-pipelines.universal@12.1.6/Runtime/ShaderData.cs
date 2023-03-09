@@ -6,11 +6,12 @@ namespace UnityEngine.Rendering.Universal
     class ShaderData : IDisposable
     {
         static ShaderData m_Instance = null;
-        ComputeBuffer m_LightDataBuffer = null;
-        ComputeBuffer m_LightIndicesBuffer = null;
+        
+        ComputeBuffer m_LightDataCompBuffer = null; // ShaderInput.LightData
+        ComputeBuffer m_LightIndicesCompBuffer = null; // int
 
-        ComputeBuffer m_AdditionalLightShadowParamsStructuredBuffer = null;
-        ComputeBuffer m_AdditionalLightShadowSliceMatricesStructuredBuffer = null;
+        ComputeBuffer m_AdditionalLightShadowParamsCompBuffer = null; // Vector4
+        ComputeBuffer m_AdditionalLightShadowSliceMatricesCompBuffer = null; // Vector4
 
         ShaderData()
         {
@@ -29,30 +30,30 @@ namespace UnityEngine.Rendering.Universal
 
         public void Dispose()
         {
-            DisposeBuffer(ref m_LightDataBuffer);
-            DisposeBuffer(ref m_LightIndicesBuffer);
-            DisposeBuffer(ref m_AdditionalLightShadowParamsStructuredBuffer);
-            DisposeBuffer(ref m_AdditionalLightShadowSliceMatricesStructuredBuffer);
+            DisposeBuffer(ref this.m_LightDataCompBuffer);
+            DisposeBuffer(ref this.m_LightIndicesCompBuffer);
+            DisposeBuffer(ref this.m_AdditionalLightShadowParamsCompBuffer);
+            DisposeBuffer(ref this.m_AdditionalLightShadowSliceMatricesCompBuffer);
         }
 
         internal ComputeBuffer GetLightDataBuffer(int size)
         {
-            return GetOrUpdateBuffer<ShaderInput.LightData>(ref m_LightDataBuffer, size);
+            return GetOrUpdateBuffer<ShaderInput.LightData>(ref this.m_LightDataCompBuffer, size);
         }
 
         internal ComputeBuffer GetLightIndicesBuffer(int size)
         {
-            return GetOrUpdateBuffer<int>(ref m_LightIndicesBuffer, size);
+            return GetOrUpdateBuffer<int>(ref this.m_LightIndicesCompBuffer, size);
         }
 
         internal ComputeBuffer GetAdditionalLightShadowParamsStructuredBuffer(int size)
         {
-            return GetOrUpdateBuffer<Vector4>(ref m_AdditionalLightShadowParamsStructuredBuffer, size);
+            return GetOrUpdateBuffer<Vector4>(ref this.m_AdditionalLightShadowParamsCompBuffer, size);
         }
 
         internal ComputeBuffer GetAdditionalLightShadowSliceMatricesStructuredBuffer(int size)
         {
-            return GetOrUpdateBuffer<Matrix4x4>(ref m_AdditionalLightShadowSliceMatricesStructuredBuffer, size);
+            return GetOrUpdateBuffer<Matrix4x4>(ref this.m_AdditionalLightShadowSliceMatricesCompBuffer, size);
         }
 
         ComputeBuffer GetOrUpdateBuffer<T>(ref ComputeBuffer buffer, int size) where T : struct

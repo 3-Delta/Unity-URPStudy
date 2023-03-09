@@ -34,8 +34,9 @@ namespace UnityEngine.Rendering.Universal
             {
                 var colorAttachmentIdentifier = m_CameraColorHandle.Identifier();
                 var captureActions = renderingData.cameraData.captureActions;
-                for (captureActions.Reset(); captureActions.MoveNext();)
+                for (captureActions.Reset(); captureActions.MoveNext();) {
                     captureActions.Current(colorAttachmentIdentifier, cmdBuf);
+                }
             }
 
             context.ExecuteCommandBuffer(cmdBuf);

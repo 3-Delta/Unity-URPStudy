@@ -455,6 +455,7 @@ namespace UnityEngine.Rendering.Universal
         internal bool disableNativeRenderPassInFeatures = false;
 
         // 介绍说是多pass需要切换RT，而native会把多pass修改为一个pass下的多个subpass,就不需要切换RT了，需要vulkan和metal支持
+        // 主要是使用subpass，减少显存和缓存的传输消耗
         // https://www.bilibili.com/video/BV1sG411p737/?spm_id_from=333.788&vd_source=5c9f5bd891aee351c325bcf632b5550f
         internal bool useRenderPassEnabled = false;
         
@@ -466,8 +467,7 @@ namespace UnityEngine.Rendering.Universal
         static RenderTargetIdentifier[] m_ActiveColorAttachments = new RenderTargetIdentifier[] { 0, 0, 0, 0, 0, 0, 0, 0, };
         static RenderTargetIdentifier m_ActiveDepthAttachment;
 
-        private static RenderBufferStoreAction[] m_ActiveColorStoreActions = new RenderBufferStoreAction[]
-        {
+        private static RenderBufferStoreAction[] m_ActiveColorStoreActions = new RenderBufferStoreAction[] {
             RenderBufferStoreAction.Store, RenderBufferStoreAction.Store, RenderBufferStoreAction.Store, RenderBufferStoreAction.Store,
             RenderBufferStoreAction.Store, RenderBufferStoreAction.Store, RenderBufferStoreAction.Store, RenderBufferStoreAction.Store
         };
@@ -668,6 +668,7 @@ namespace UnityEngine.Rendering.Universal
 
                 SetupNativeRenderPassFrameData(cameraData, useRenderPassEnabled);
 
+                // pass排序之后，将所有可用的pass全部分类到成都为4的block之内
                 using var renderBlocks = new RenderBlocks(m_ActiveRenderPassQueue);
 
                 using (new ProfilingScope(null, Profiling.setupLights))
@@ -960,6 +961,7 @@ namespace UnityEngine.Rendering.Universal
             return renderPass.useNativeRenderPass && useRenderPassEnabled;
         }
 
+        // 渲染核心
         void ExecuteRenderPass(ScriptableRenderContext context, ScriptableRenderPass renderPass,
             ref RenderingData renderingData)
         {
@@ -1400,7 +1402,7 @@ namespace UnityEngine.Rendering.Universal
             using (new ProfilingScope(null, Profiling.internalFinishRendering))
             {
                 for (int i = 0; i < m_ActiveRenderPassQueue.Count; ++i)
-                    m_ActiveRenderPassQueue[i].FrameCleanup(cmd);
+                    m_ActiveRenderPassQueue[i].OnCameraCleanup(cmd);
 
                 // Happens when rendering the last camera in the camera stack.
                 if (resolveFinalTarget)

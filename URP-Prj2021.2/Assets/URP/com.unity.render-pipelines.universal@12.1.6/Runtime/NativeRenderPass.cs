@@ -7,6 +7,10 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.Rendering.Universal
 {
+    // 主要是为了subpass设计
+    // subpass的目的是：
+    // 不再将GBuffer从Tile Memory写入显存
+    // 不再从显存将GBuffer读到Tile Memory
     public partial class ScriptableRenderer
     {
         private const int kRenderPassMapSize = 10;
@@ -99,7 +103,7 @@ namespace UnityEngine.Rendering.Universal
                 // reset all the passes last pass flag
                 for (int i = 0; i < m_ActiveRenderPassQueue.Count; ++i)
                 {
-                    var renderPass = m_ActiveRenderPassQueue[i];
+                    ScriptableRenderPass renderPass = m_ActiveRenderPassQueue[i];
 
                     // Empty configure to setup dimensions/targets and whatever data is needed for merging
                     // We do not execute this at this time, so render targets are still invalid

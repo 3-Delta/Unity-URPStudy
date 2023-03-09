@@ -13,29 +13,34 @@ namespace UnityEngine.Rendering.Universal.Internal
     /// </summary>
     public class ForwardLights
     {
-        static class LightConstantBuffer
-        {
-            public static int _MainLightPosition;   // DeferredLights.LightConstantBuffer also refers to the same ShaderPropertyID - TODO: move this definition to a common location shared by other UniversalRP classes
-            public static int _MainLightColor;      // DeferredLights.LightConstantBuffer also refers to the same ShaderPropertyID - TODO: move this definition to a common location shared by other UniversalRP classes
-            public static int _MainLightOcclusionProbesChannel;    // Deferred?
-            public static int _MainLightLayerMask;
-
-            public static int _AdditionalLightsCount;
-            public static int _AdditionalLightsPosition;
-            public static int _AdditionalLightsColor;
-            public static int _AdditionalLightsAttenuation;
-            public static int _AdditionalLightsSpotDir;
-            public static int _AdditionalLightOcclusionProbeChannel;
-            public static int _AdditionalLightsLayerMasks;
-        }
-
-        int m_AdditionalLightsBufferId;
-        int m_AdditionalLightsIndicesId;
-
         const string k_SetupLightConstants = "Setup Light Constants";
         private static readonly ProfilingSampler m_ProfilingSampler = new ProfilingSampler(k_SetupLightConstants);
         MixedLightingSetup m_MixedLightingSetup;
+        
+        static partial class LightConstantBuffer
+        {
+            public static int _MainLightPositionPID;   // DeferredLights.LightConstantBuffer also refers to the same ShaderPropertyID - TODO: move this definition to a common location shared by other UniversalRP classes
+            public static int _MainLightColorPID;      // DeferredLights.LightConstantBuffer also refers to the same ShaderPropertyID - TODO: move this definition to a common location shared by other UniversalRP classes
+            public static int _MainLightOcclusionProbesChannelPID;    // Deferred?
+            public static int _MainLightLayerMaskPID;
+        }
 
+        static partial class LightConstantBuffer {
+            public static int _AdditionalLightsCountPID;
+            
+            // 结构体方式
+            public static int  _AdditionalLightsBufferPID; // Shader.PropertyToID("_AdditionalLightsBuffer");
+            public static int  _AdditionalLightsIndicesPID; // Shader.PropertyToID("_AdditionalLightsIndices");
+            
+            // 正常方式
+            public static int _AdditionalLightsPositionPID;
+            public static int _AdditionalLightsColorPID;
+            public static int _AdditionalLightsAttenuationPID;
+            public static int _AdditionalLightsSpotDirPID;
+            public static int _AdditionalLightOcclusionProbeChannelPID;
+            public static int _AdditionalLightsLayerMasksPID;
+        }
+        
         Vector4[] m_AdditionalLightPositions;
         Vector4[] m_AdditionalLightColors;
         Vector4[] m_AdditionalLightAttenuations;
@@ -43,10 +48,14 @@ namespace UnityEngine.Rendering.Universal.Internal
         Vector4[] m_AdditionalLightOcclusionProbeChannels;
         float[] m_AdditionalLightsLayerMasks;  // Unity has no support for binding uint arrays. We will use asuint() in the shader instead.
 
+        // 其实就是是否可以使用ComputeBuffer传递数据给GPU，因为普通的同时通过cmd.SetGlobalVectorArray传递，比较低效
+        // 可以传递自定义结构体
         bool m_UseStructuredBuffer;
-
+        // custer渲染，tile渲染
         bool m_UseClusteredRendering;
+        
         int m_DirectionalLightCount;
+        
         int m_ActualTileWidth;
         int2 m_TileResolution;
         int m_RequestedTileWidth;
@@ -54,11 +63,11 @@ namespace UnityEngine.Rendering.Universal.Internal
         int m_ZBinOffset;
 
         JobHandle m_CullingHandle;
-        NativeArray<ZBin> m_ZBins;
-        NativeArray<uint> m_TileLightMasks;
+        NativeArray<ZBin> m_ZBinsNA;
+        NativeArray<uint> m_TileLightMasksNA;
 
-        ComputeBuffer m_ZBinBuffer;
-        ComputeBuffer m_TileBuffer;
+        ComputeBuffer m_ZBinCompBuffer;
+        ComputeBuffer m_TileCompBuffer;
 
         private LightCookieManager m_LightCookieManager;
 
@@ -92,29 +101,32 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         internal ForwardLights(InitParams initParams)
         {
-            if (initParams.clusteredRendering) Assert.IsTrue(math.ispow2(initParams.tileSize));
+            if (initParams.clusteredRendering) {
+                Assert.IsTrue(math.ispow2(initParams.tileSize));
+            }
             m_UseStructuredBuffer = RenderingUtils.useStructuredBuffer;
             m_UseClusteredRendering = initParams.clusteredRendering;
 
-            LightConstantBuffer._MainLightPosition = Shader.PropertyToID("_MainLightPosition");
-            LightConstantBuffer._MainLightColor = Shader.PropertyToID("_MainLightColor");
-            LightConstantBuffer._MainLightOcclusionProbesChannel = Shader.PropertyToID("_MainLightOcclusionProbes");
-            LightConstantBuffer._MainLightLayerMask = Shader.PropertyToID("_MainLightLayerMask");
-            LightConstantBuffer._AdditionalLightsCount = Shader.PropertyToID("_AdditionalLightsCount");
+            LightConstantBuffer._MainLightPositionPID = Shader.PropertyToID("_MainLightPosition");
+            LightConstantBuffer._MainLightColorPID = Shader.PropertyToID("_MainLightColor");
+            LightConstantBuffer._MainLightOcclusionProbesChannelPID = Shader.PropertyToID("_MainLightOcclusionProbes");
+            LightConstantBuffer._MainLightLayerMaskPID = Shader.PropertyToID("_MainLightLayerMask");
+            
+            LightConstantBuffer._AdditionalLightsCountPID = Shader.PropertyToID("_AdditionalLightsCount");
 
             if (m_UseStructuredBuffer)
             {
-                m_AdditionalLightsBufferId = Shader.PropertyToID("_AdditionalLightsBuffer");
-                m_AdditionalLightsIndicesId = Shader.PropertyToID("_AdditionalLightsIndices");
+                LightConstantBuffer._AdditionalLightsBufferPID = Shader.PropertyToID("_AdditionalLightsBuffer");
+                LightConstantBuffer._AdditionalLightsIndicesPID = Shader.PropertyToID("_AdditionalLightsIndices");
             }
             else
             {
-                LightConstantBuffer._AdditionalLightsPosition = Shader.PropertyToID("_AdditionalLightsPosition");
-                LightConstantBuffer._AdditionalLightsColor = Shader.PropertyToID("_AdditionalLightsColor");
-                LightConstantBuffer._AdditionalLightsAttenuation = Shader.PropertyToID("_AdditionalLightsAttenuation");
-                LightConstantBuffer._AdditionalLightsSpotDir = Shader.PropertyToID("_AdditionalLightsSpotDir");
-                LightConstantBuffer._AdditionalLightOcclusionProbeChannel = Shader.PropertyToID("_AdditionalLightsOcclusionProbes");
-                LightConstantBuffer._AdditionalLightsLayerMasks = Shader.PropertyToID("_AdditionalLightsLayerMasks");
+                LightConstantBuffer._AdditionalLightsPositionPID = Shader.PropertyToID("_AdditionalLightsPosition");
+                LightConstantBuffer._AdditionalLightsColorPID = Shader.PropertyToID("_AdditionalLightsColor");
+                LightConstantBuffer._AdditionalLightsAttenuationPID = Shader.PropertyToID("_AdditionalLightsAttenuation");
+                LightConstantBuffer._AdditionalLightsSpotDirPID = Shader.PropertyToID("_AdditionalLightsSpotDir");
+                LightConstantBuffer._AdditionalLightOcclusionProbeChannelPID = Shader.PropertyToID("_AdditionalLightsOcclusionProbes");
+                LightConstantBuffer._AdditionalLightsLayerMasksPID = Shader.PropertyToID("_AdditionalLightsLayerMasks");
 
                 int maxLights = UniversalRenderPipeline.maxVisibleAdditionalLights;
                 m_AdditionalLightPositions = new Vector4[maxLights];
@@ -129,8 +141,8 @@ namespace UnityEngine.Rendering.Universal.Internal
 
             if (m_UseClusteredRendering)
             {
-                m_ZBinBuffer = new ComputeBuffer(UniversalRenderPipeline.maxZBins / 4, UnsafeUtility.SizeOf<float4>(), ComputeBufferType.Constant, ComputeBufferMode.Dynamic);
-                m_TileBuffer = new ComputeBuffer(UniversalRenderPipeline.maxTileVec4s, UnsafeUtility.SizeOf<float4>(), ComputeBufferType.Constant, ComputeBufferMode.Dynamic);
+                this.m_ZBinCompBuffer = new ComputeBuffer(UniversalRenderPipeline.maxZBins / 4, UnsafeUtility.SizeOf<float4>(), ComputeBufferType.Constant, ComputeBufferMode.Dynamic);
+                this.m_TileCompBuffer = new ComputeBuffer(UniversalRenderPipeline.maxTileVec4s, UnsafeUtility.SizeOf<float4>(), ComputeBufferType.Constant, ComputeBufferMode.Dynamic);
                 m_RequestedTileWidth = initParams.tileSize;
             }
         }
@@ -146,38 +158,64 @@ namespace UnityEngine.Rendering.Universal.Internal
                 var lightOffset = 0;
                 while (lightOffset < lightCount && renderingData.lightData.visibleLights[lightOffset].lightType == LightType.Directional)
                 {
+                    // 计算平行光的数量
                     lightOffset++;
                 }
-                if (lightOffset == lightCount) lightOffset = 0;
-                lightCount -= lightOffset;
 
+                if (lightOffset == lightCount) {
+                    // 全部都是平行光
+                    lightOffset = 0;
+                }
+                
+                // 非平行光数量
+                lightCount -= lightOffset;
+                
+                // 非mainLight的平行光数量
                 m_DirectionalLightCount = lightOffset;
-                if (renderingData.lightData.mainLightIndex != -1) m_DirectionalLightCount -= 1;
+                if (renderingData.lightData.mainLightIndex != -1) {
+                    m_DirectionalLightCount -= 1;
+                }
 
                 var visibleLights = renderingData.lightData.visibleLights.GetSubArray(lightOffset, lightCount);
                 var lightsPerTile = UniversalRenderPipeline.lightsPerTile;
                 var wordsPerTile = lightsPerTile / 32;
 
+                // m_RequestedTileWidth是配置的tileSize
                 m_ActualTileWidth = m_RequestedTileWidth >> 1;
                 do
                 {
                     m_ActualTileWidth = m_ActualTileWidth << 1;
+                    // 商 向上取整
                     m_TileResolution = (screenResolution + m_ActualTileWidth - 1) / m_ActualTileWidth;
                 }
                 while ((m_TileResolution.x * m_TileResolution.y * wordsPerTile) > (UniversalRenderPipeline.maxTileVec4s * 4));
 
+                // URP-Prj2021.2\Assets\URP\com.unity.render-pipelines.universal@12.1.6\Runtime\Tangent-Fov.png
                 var fovHalfHeight = math.tan(math.radians(camera.fieldOfView * 0.5f));
                 // TODO: Make this work with VR
-                var fovHalfWidth = fovHalfHeight * (float)screenResolution.x / (float)screenResolution.y;
+                var aspect = (float)screenResolution.x / (float)screenResolution.y;
+                // 将近裁剪面距离当做1，那么此时halfHeight的一半就是fovHalfHeight
+                var fovHalfWidth = fovHalfHeight * aspect;
 
-                var maxZFactor = (float)UniversalRenderPipeline.maxZBins / (math.sqrt(camera.farClipPlane) - math.sqrt(camera.nearClipPlane));
+                /*
+                    相机视锥体的Z范围是由相机的近裁剪面和远裁剪面决定的，它们之间的差值可以用简单的减法运算来计算。
+                    但是，这个差值并不一定是最优的分割间隔，因为相机视锥体的深度分布是非线性的，物体在Z方向上的分布也可能是非线性的。
+                    因此，将Z范围均分成若干层，并不一定能够得到最优的渲染效果。为了更好地适应这种非线性的分布，这里采用平方根间隔来划分Z范围。
+                    平方根间隔能够更好地适应深度分布的非线性性，以及物体在Z方向上的非均匀分布。而math.sqrt函数正是用来计算平方根的，
+                    因此在这段代码中进行了math.sqrt计算。
+                */
+                var unLinearZDiff = math.sqrt(camera.farClipPlane) - math.sqrt(camera.nearClipPlane);
+                var maxZFactor = (float)UniversalRenderPipeline.maxZBins / unLinearZDiff;
                 m_ZBinFactor = maxZFactor;
                 m_ZBinOffset = (int)(math.sqrt(camera.nearClipPlane) * m_ZBinFactor);
+                
+                // z分块
                 var binCount = (int)(math.sqrt(camera.farClipPlane) * m_ZBinFactor) - m_ZBinOffset;
                 // Must be a multiple of 4 to be able to alias to vec4
                 binCount = ((binCount + 3) / 4) * 4;
                 binCount = math.min(UniversalRenderPipeline.maxZBins, binCount);
-                m_ZBins = new NativeArray<ZBin>(binCount, Allocator.TempJob);
+                
+                this.m_ZBinsNA = new NativeArray<ZBin>(binCount, Allocator.TempJob);
                 Assert.AreEqual(UnsafeUtility.SizeOf<uint>(), UnsafeUtility.SizeOf<ZBin>());
 
                 using var minMaxZs = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
@@ -195,6 +233,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                 // Innerloop batch count of 32 is not special, just a handwavy amount to not have too much scheduling overhead nor too little parallelism.
                 var minMaxZHandle = minMaxZJob.ScheduleParallel(lightCount, 32, new JobHandle());
 
+                // Allocator.TempJob存在4帧
                 // We allocate double array length because the sorting algorithm needs swap space to work in.
                 using var indices = new NativeArray<int>(lightCount * 2, Allocator.TempJob);
                 var radixSortJob = new RadixSortJob
@@ -208,10 +247,14 @@ namespace UnityEngine.Rendering.Universal.Internal
                 var reorderedLights = new NativeArray<VisibleLight>(lightCount, Allocator.TempJob);
                 var reorderedMinMaxZs = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
 
-                var reorderLightsJob = new ReorderJob<VisibleLight> { indices = indices, input = visibleLights, output = reorderedLights };
+                var reorderLightsJob = new ReorderJob<VisibleLight> {
+                    indices = indices, input = visibleLights, output = reorderedLights
+                };
                 var reorderLightsHandle = reorderLightsJob.ScheduleParallel(lightCount, 32, zSortHandle);
 
-                var reorderMinMaxZsJob = new ReorderJob<LightMinMaxZ> { indices = indices, input = minMaxZs, output = reorderedMinMaxZs };
+                var reorderMinMaxZsJob = new ReorderJob<LightMinMaxZ> {
+                    indices = indices, input = minMaxZs, output = reorderedMinMaxZs
+                };
                 var reorderMinMaxZsHandle = reorderMinMaxZsJob.ScheduleParallel(lightCount, 32, zSortHandle);
 
                 var reorderHandle = JobHandle.CombineDependencies(
@@ -219,6 +262,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                     reorderMinMaxZsHandle
                 );
 
+                // JobHandle.ScheduleBatchedJobs：当你想要你的job开始执行时，可以调用这个函数flush调度的batch。不flush batch会导致调度延迟到主线程等待batch执行结果时才触发执行
                 JobHandle.ScheduleBatchedJobs();
 
                 LightExtractionJob lightExtractionJob;
@@ -232,7 +276,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
                 var zBinningJob = new ZBinningJob
                 {
-                    bins = m_ZBins,
+                    bins = this.m_ZBinsNA,
                     minMaxZs = reorderedMinMaxZs,
                     binOffset = m_ZBinOffset,
                     zFactor = m_ZBinFactor
@@ -273,14 +317,14 @@ namespace UnityEngine.Rendering.Universal.Internal
 
                 var slicesHandle = JobHandle.CombineDependencies(horizontalHandle, verticalHandle);
 
-                m_TileLightMasks = new NativeArray<uint>(((m_TileResolution.x * m_TileResolution.y * (wordsPerTile) + 3) / 4) * 4, Allocator.TempJob);
+                this.m_TileLightMasksNA = new NativeArray<uint>(((m_TileResolution.x * m_TileResolution.y * (wordsPerTile) + 3) / 4) * 4, Allocator.TempJob);
                 var sliceCombineJob = new SliceCombineJob
                 {
                     tileResolution = m_TileResolution,
                     wordsPerTile = wordsPerTile,
                     sliceLightMasksH = horizontalLightMasks,
                     sliceLightMasksV = verticalLightMasks,
-                    lightMasks = m_TileLightMasks
+                    lightMasks = this.m_TileLightMasksNA
                 };
                 var sliceCombineHandle = sliceCombineJob.ScheduleParallel(m_TileResolution.y, 1, slicesHandle);
 
@@ -325,7 +369,17 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
         {
+            /*
+                lightData.supportsAdditionalLights = settings.additionalLightsRenderingMode != LightRenderingMode.Disabled;
+                lightData.shadeAdditionalLightsPerVertex = settings.additionalLightsRenderingMode == LightRenderingMode.PerVertex;
+                lightData.visibleLights = visibleLights;
+                lightData.supportsMixedLighting = settings.supportsMixedLighting;
+                lightData.reflectionProbeBlending = settings.reflectionProbeBlending;
+                lightData.reflectionProbeBoxProjection = settings.reflectionProbeBoxProjection;
+                lightData.supportsLightLayers = RenderingUtils.SupportsLightLayers(SystemInfo.graphicsDeviceType) && settings.supportsLightLayers;
+            */
             int additionalLightsCount = renderingData.lightData.additionalLightsCount;
+            // 附加光源是否是逐顶点光照, 逐顶点光照在这里影响shader
             bool additionalLightsPerVertex = renderingData.lightData.shadeAdditionalLightsPerVertex;
             CommandBuffer cmd = CommandBufferPool.Get();
             using (new ProfilingScope(null, m_ProfilingSampler))
@@ -335,8 +389,8 @@ namespace UnityEngine.Rendering.Universal.Internal
                 {
                     m_CullingHandle.Complete();
 
-                    m_ZBinBuffer.SetData(m_ZBins.Reinterpret<float4>(UnsafeUtility.SizeOf<ZBin>()), 0, 0, m_ZBins.Length / 4);
-                    m_TileBuffer.SetData(m_TileLightMasks.Reinterpret<float4>(UnsafeUtility.SizeOf<uint>()), 0, 0, m_TileLightMasks.Length / 4);
+                    this.m_ZBinCompBuffer.SetData(this.m_ZBinsNA.Reinterpret<float4>(UnsafeUtility.SizeOf<ZBin>()), 0, 0, this.m_ZBinsNA.Length / 4);
+                    this.m_TileCompBuffer.SetData(this.m_TileLightMasksNA.Reinterpret<float4>(UnsafeUtility.SizeOf<uint>()), 0, 0, this.m_TileLightMasksNA.Length / 4);
 
                     cmd.SetGlobalInteger("_AdditionalLightsDirectionalCount", m_DirectionalLightCount);
                     cmd.SetGlobalInteger("_AdditionalLightsZBinOffset", m_ZBinOffset);
@@ -344,22 +398,22 @@ namespace UnityEngine.Rendering.Universal.Internal
                     cmd.SetGlobalVector("_AdditionalLightsTileScale", renderingData.cameraData.pixelRect.size / (float)m_ActualTileWidth);
                     cmd.SetGlobalInteger("_AdditionalLightsTileCountX", m_TileResolution.x);
 
-                    cmd.SetGlobalConstantBuffer(m_ZBinBuffer, "AdditionalLightsZBins", 0, m_ZBins.Length * 4);
-                    cmd.SetGlobalConstantBuffer(m_TileBuffer, "AdditionalLightsTiles", 0, m_TileLightMasks.Length * 4);
+                    cmd.SetGlobalConstantBuffer(this.m_ZBinCompBuffer, "AdditionalLightsZBins", 0, this.m_ZBinsNA.Length * 4);
+                    cmd.SetGlobalConstantBuffer(this.m_TileCompBuffer, "AdditionalLightsTiles", 0, this.m_TileLightMasksNA.Length * 4);
 
-                    m_ZBins.Dispose();
-                    m_TileLightMasks.Dispose();
+                    this.m_ZBinsNA.Dispose();
+                    this.m_TileLightMasksNA.Dispose();
                 }
 
                 SetupShaderLightConstants(cmd, ref renderingData);
 
                 bool lightCountCheck = (renderingData.cameraData.renderer.stripAdditionalLightOffVariants && renderingData.lightData.supportsAdditionalLights) || additionalLightsCount > 0;
-                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsVertex,
-                    lightCountCheck && additionalLightsPerVertex && !useClusteredRendering);
-                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel,
-                    lightCountCheck && !additionalLightsPerVertex && !useClusteredRendering);
-                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.ClusteredRendering,
-                    useClusteredRendering);
+                // 附加光源 顶点光照
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsVertex, lightCountCheck && additionalLightsPerVertex && !useClusteredRendering);
+                // 附加光源 像素光照
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel, lightCountCheck && !additionalLightsPerVertex && !useClusteredRendering);
+                // tile渲染
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.ClusteredRendering, useClusteredRendering);
 
                 bool isShadowMask = renderingData.lightData.supportsMixedLighting && m_MixedLightingSetup == MixedLightingSetup.ShadowMask;
                 bool isShadowMaskAlways = isShadowMask && QualitySettings.shadowmaskMode == ShadowmaskMode.Shadowmask;
@@ -384,8 +438,8 @@ namespace UnityEngine.Rendering.Universal.Internal
         {
             if (m_UseClusteredRendering)
             {
-                m_ZBinBuffer.Dispose();
-                m_TileBuffer.Dispose();
+                this.m_ZBinCompBuffer.Dispose();
+                this.m_TileCompBuffer.Dispose();
             }
         }
 
@@ -440,10 +494,10 @@ namespace UnityEngine.Rendering.Universal.Internal
             uint lightLayerMask;
             InitializeLightConstants(lightData.visibleLights, lightData.mainLightIndex, out lightPos, out lightColor, out lightAttenuation, out lightSpotDir, out lightOcclusionChannel, out lightLayerMask);
 
-            cmd.SetGlobalVector(LightConstantBuffer._MainLightPosition, lightPos);
-            cmd.SetGlobalVector(LightConstantBuffer._MainLightColor, lightColor);
-            cmd.SetGlobalVector(LightConstantBuffer._MainLightOcclusionProbesChannel, lightOcclusionChannel);
-            cmd.SetGlobalInt(LightConstantBuffer._MainLightLayerMask, (int)lightLayerMask);
+            cmd.SetGlobalVector(LightConstantBuffer._MainLightPositionPID, lightPos);
+            cmd.SetGlobalVector(LightConstantBuffer._MainLightColorPID, lightColor);
+            cmd.SetGlobalVector(LightConstantBuffer._MainLightOcclusionProbesChannelPID, lightOcclusionChannel);
+            cmd.SetGlobalInt(LightConstantBuffer._MainLightLayerMaskPID, (int)lightLayerMask);
         }
 
         void SetupAdditionalLightConstants(CommandBuffer cmd, ref RenderingData renderingData)
@@ -479,8 +533,8 @@ namespace UnityEngine.Rendering.Universal.Internal
                     int lightIndices = cullResults.lightAndReflectionProbeIndexCount;
                     var lightIndicesBuffer = ShaderData.instance.GetLightIndicesBuffer(lightIndices);
 
-                    cmd.SetGlobalBuffer(m_AdditionalLightsBufferId, lightDataBuffer);
-                    cmd.SetGlobalBuffer(m_AdditionalLightsIndicesId, lightIndicesBuffer);
+                    cmd.SetGlobalBuffer(LightConstantBuffer._AdditionalLightsBufferPID, lightDataBuffer);
+                    cmd.SetGlobalBuffer(LightConstantBuffer._AdditionalLightsIndicesPID, lightIndicesBuffer);
 
                     additionalLightsData.Dispose();
                 }
@@ -503,20 +557,20 @@ namespace UnityEngine.Rendering.Universal.Internal
                         }
                     }
 
-                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsPosition, m_AdditionalLightPositions);
-                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsColor, m_AdditionalLightColors);
-                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsAttenuation, m_AdditionalLightAttenuations);
-                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsSpotDir, m_AdditionalLightSpotDirections);
-                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightOcclusionProbeChannel, m_AdditionalLightOcclusionProbeChannels);
-                    cmd.SetGlobalFloatArray(LightConstantBuffer._AdditionalLightsLayerMasks, m_AdditionalLightsLayerMasks);
+                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsPositionPID, m_AdditionalLightPositions);
+                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsColorPID, m_AdditionalLightColors);
+                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsAttenuationPID, m_AdditionalLightAttenuations);
+                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightsSpotDirPID, m_AdditionalLightSpotDirections);
+                    cmd.SetGlobalVectorArray(LightConstantBuffer._AdditionalLightOcclusionProbeChannelPID, m_AdditionalLightOcclusionProbeChannels);
+                    cmd.SetGlobalFloatArray(LightConstantBuffer._AdditionalLightsLayerMasksPID, m_AdditionalLightsLayerMasks);
                 }
 
-                cmd.SetGlobalVector(LightConstantBuffer._AdditionalLightsCount, new Vector4(lightData.maxPerObjectAdditionalLightsCount,
+                cmd.SetGlobalVector(LightConstantBuffer._AdditionalLightsCountPID, new Vector4(lightData.maxPerObjectAdditionalLightsCount,
                     0.0f, 0.0f, 0.0f));
             }
             else
             {
-                cmd.SetGlobalVector(LightConstantBuffer._AdditionalLightsCount, Vector4.zero);
+                cmd.SetGlobalVector(LightConstantBuffer._AdditionalLightsCountPID, Vector4.zero);
             }
         }
 

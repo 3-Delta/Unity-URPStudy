@@ -30,6 +30,41 @@ namespace UnityEngine.Rendering.Universal
     /// </summary>
     public enum RenderPassEvent
     {
+        /*
+         BeforeRendering,
+         
+         BeforeRenderingShadows
+         AfterRenderingShadows
+         
+         BeforeRenderingPrePasses        // m_BlockEventLimits[RenderPassBlock.BeforeRendering]
+         AfterRenderingPrePasses
+         
+         BeforeRenderingGbuffer
+         AfterRenderingGbuffer
+         
+         BeforeRenderingDeferredLights
+         AfterRenderingDeferredLights
+         
+         BeforeRenderingOpaques
+         AfterRenderingOpaques           // m_BlockEventLimits[RenderPassBlock.MainRenderingOpaque]
+         
+         BeforeRenderingSkybox = 350,
+         AfterRenderingSkybox = 400,
+         
+         BeforeRenderingTransparents = 450,
+         AfterRenderingTransparents = 500,
+        
+         BeforeRenderingPostProcessing = 550,
+         AfterRenderingPostProcessing = 600,   // m_BlockEventLimits[RenderPassBlock.MainRenderingTransparent]
+        
+         AfterRendering = 1000,                 // m_BlockEventLimits[RenderPassBlock.AfterRendering]
+         
+         m_BlockEventLimits[RenderPassBlock.BeforeRendering] = RenderPassEvent.BeforeRenderingPrePasses;
+         m_BlockEventLimits[RenderPassBlock.MainRenderingOpaque] = RenderPassEvent.AfterRenderingOpaques;
+         m_BlockEventLimits[RenderPassBlock.MainRenderingTransparent] = RenderPassEvent.AfterRenderingPostProcessing;
+         m_BlockEventLimits[RenderPassBlock.AfterRendering] = (RenderPassEvent)Int32.MaxValue;
+         */
+        
         /// <summary>
         /// Executes a <c>ScriptableRenderPass</c> before rendering any other passes in the pipeline.
         /// Camera matrices and stereo rendering are not setup this point.
@@ -54,11 +89,7 @@ namespace UnityEngine.Rendering.Universal
         /// Camera matrices and stereo rendering are already setup at this point.
         /// </summary>
         BeforeRenderingPrePasses = 150,
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Obsolete, to match the capital from 'Prepass' to 'PrePass' (UnityUpgradable) -> BeforeRenderingPrePasses")]
-        BeforeRenderingPrepasses = 151,
-
+        
         /// <summary>
         /// Executes a <c>ScriptableRenderPass</c> after rendering prepasses, f.ex, depth prepass.
         /// Camera matrices and stereo rendering are already setup at this point.
@@ -136,6 +167,7 @@ namespace UnityEngine.Rendering.Universal
     /// </summary>
     public abstract partial class ScriptableRenderPass
     {
+        // 执行时机
         public RenderPassEvent renderPassEvent { get; set; }
 
         public RenderTargetIdentifier[] colorAttachments
@@ -192,12 +224,16 @@ namespace UnityEngine.Rendering.Universal
             get => m_ClearColor;
         }
 
-        RenderBufferStoreAction[] m_ColorStoreActions = new RenderBufferStoreAction[] { RenderBufferStoreAction.Store };
         RenderBufferStoreAction m_DepthStoreAction = RenderBufferStoreAction.Store;
-
+        RenderBufferStoreAction[] m_ColorStoreActions = new RenderBufferStoreAction[] {
+            RenderBufferStoreAction.Store
+        };
+        
         // by default all store actions are Store. The overridden flags are used to keep track of explicitly requested store actions, to
         // help figuring out the correct final store action for merged render passes when using the RenderPass API.
-        private bool[] m_OverriddenColorStoreActions = new bool[] { false };
+        private bool[] m_OverriddenColorStoreActions = new bool[] {
+            false
+        };
         private bool m_OverriddenDepthStoreAction = false;
 
         /// <summary>
@@ -225,11 +261,17 @@ namespace UnityEngine.Rendering.Universal
         internal NativeArray<int> m_InputAttachmentIndices;
 
         internal GraphicsFormat[] renderTargetFormat { get; set; }
-        RenderTargetIdentifier[] m_ColorAttachments = new RenderTargetIdentifier[] { BuiltinRenderTextureType.CameraTarget };
+        
+        // 默认的渲染目标都是屏幕CameraTarget
+        RenderTargetIdentifier[] m_ColorAttachments = new RenderTargetIdentifier[] {
+            BuiltinRenderTextureType.CameraTarget
+        };
+        RenderTargetIdentifier m_DepthAttachment = BuiltinRenderTextureType.CameraTarget;
+        
         internal RenderTargetIdentifier[] m_InputAttachments = new RenderTargetIdentifier[8];
         internal bool[] m_InputAttachmentIsTransient = new bool[8];
-        RenderTargetIdentifier m_DepthAttachment = BuiltinRenderTextureType.CameraTarget;
         ScriptableRenderPassInput m_Input = ScriptableRenderPassInput.None;
+        
         ClearFlag m_ClearFlag = ClearFlag.None;
         Color m_ClearColor = Color.black;
 

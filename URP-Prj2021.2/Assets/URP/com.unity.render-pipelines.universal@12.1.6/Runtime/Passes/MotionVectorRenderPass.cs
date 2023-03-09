@@ -137,7 +137,7 @@ namespace UnityEngine.Rendering.Universal.Internal
         #endregion
 
         #region Cleanup
-        public override void FrameCleanup(CommandBuffer cmd)
+        public override void OnCameraCleanup(CommandBuffer cmd)
         {
             if (cmd == null)
                 throw new ArgumentNullException("cmd");

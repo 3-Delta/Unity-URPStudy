@@ -131,8 +131,18 @@ namespace UnityEngine.Rendering.Universal
         }
 
         // Match with values in Input.hlsl
-        internal static int lightsPerTile => ((maxVisibleAdditionalLights + 31) / 32) * 32;
+        // 每个Tile中最多可以包含多少个灯光
+        // maxVisibleAdditionalLights的向上的最接近的一个32的倍数
+        internal static int lightsPerTile => 
+            ((maxVisibleAdditionalLights + 31) / 32) // 商 向上取整
+            * 
+            32; // 向上的一个最接近32倍数的值
+        
+        // 摄像机的视锥体（View Frustum）分割成多少个Z分层
         internal static int maxZBins => 1024 * 4;
+        
+        // 控制渲染时使用的GPU线程组数量
+        // 例如，maxTileVec4s的值为(8,8,1,1)，则表示在x和y方向上，将渲染任务划分为8个线程组，而在z和w方向上，只使用1个线程组
         internal static int maxTileVec4s => 4096;
 
         internal const int k_DefaultRenderingLayerMask = 0x00000001;
@@ -1151,7 +1161,7 @@ namespace UnityEngine.Rendering.Universal
             lightData.reflectionProbeBoxProjection = settings.reflectionProbeBoxProjection;
             lightData.supportsLightLayers = RenderingUtils.SupportsLightLayers(SystemInfo.graphicsDeviceType) && settings.supportsLightLayers;
             
-            // perobject光照需要
+            // per-object光照需要
             lightData.originalIndices = new NativeArray<int>(visibleLights.Length, Allocator.Temp);
             for (var i = 0; i < lightData.originalIndices.Length; i++)
             {

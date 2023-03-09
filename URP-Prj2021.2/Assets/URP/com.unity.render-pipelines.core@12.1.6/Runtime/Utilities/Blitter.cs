@@ -161,6 +161,7 @@ namespace UnityEngine.Rendering
             return useTexArray ? (singleSlice ? s_BlitTexArraySingleSlice : s_BlitTexArray) : s_Blit;
         }
 
+        // 绘制大三角形
         static private void DrawTriangle(CommandBuffer cmd, Material material, int shaderPass)
         {
             if (SystemInfo.graphicsShaderLevel < 30)
@@ -169,6 +170,7 @@ namespace UnityEngine.Rendering
                 cmd.DrawProcedural(Matrix4x4.identity, material, shaderPass, MeshTopology.Triangles, 3, 1, s_PropertyBlock);
         }
 
+        // 绘制矩形
         static internal void DrawQuad(CommandBuffer cmd, Material material, int shaderPass)
         {
             if (SystemInfo.graphicsShaderLevel < 30)
