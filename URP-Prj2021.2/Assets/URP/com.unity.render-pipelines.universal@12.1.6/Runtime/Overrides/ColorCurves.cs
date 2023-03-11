@@ -1,6 +1,6 @@
 using System;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     [Serializable, VolumeComponentMenuForRenderPipeline("Post-processing/Color Curves", typeof(UniversalRenderPipeline))]
     public sealed class ColorCurves : VolumeComponent, IPostProcessComponent

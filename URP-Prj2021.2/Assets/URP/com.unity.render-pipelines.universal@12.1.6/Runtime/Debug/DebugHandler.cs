@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     class DebugHandler : IDebugDisplaySettingsQuery
     {

@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     // Culls slices along one axis of the screen.
     [BurstCompile]

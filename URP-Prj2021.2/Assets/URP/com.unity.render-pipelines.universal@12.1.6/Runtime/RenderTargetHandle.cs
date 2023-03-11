@@ -1,6 +1,6 @@
 using UnityEngine.Scripting.APIUpdating;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     // RenderTargetHandle can be thought of as a kind of ShaderProperty string hash
     public struct RenderTargetHandle

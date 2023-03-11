@@ -6,7 +6,7 @@ using System;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.Assertions;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     [Serializable, ReloadGroup, ExcludeFromPreset]
     public class UniversalRendererData : ScriptableRendererData, ISerializationCallbackReceiver

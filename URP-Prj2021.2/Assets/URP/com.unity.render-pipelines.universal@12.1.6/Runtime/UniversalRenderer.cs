@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.Rendering.SelfUniversal.Internal;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// Rendering modes for Universal renderer.
@@ -889,6 +889,7 @@ namespace UnityEngine.Rendering.Universal
         }
 
         /// <inheritdoc />
+        /// 在Render的Execute中执行，SetUp肯定先执行
         public override void SetupLights(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             m_ForwardLights.Setup(context, ref renderingData);

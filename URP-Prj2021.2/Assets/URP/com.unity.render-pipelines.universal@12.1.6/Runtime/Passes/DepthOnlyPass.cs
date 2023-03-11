@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     /// <summary>
     /// Render all objects that have a 'DepthOnly' pass into the given depth buffer.

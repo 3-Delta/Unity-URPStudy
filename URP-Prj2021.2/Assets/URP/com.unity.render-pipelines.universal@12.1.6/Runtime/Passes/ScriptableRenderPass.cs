@@ -6,7 +6,7 @@ using Unity.Collections;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// Input requirements for <c>ScriptableRenderPass</c>.

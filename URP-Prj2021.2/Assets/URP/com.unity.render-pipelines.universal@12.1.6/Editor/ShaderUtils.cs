@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
-using ShaderPathID = UnityEngine.Rendering.Universal.ShaderPathID;
+using ShaderPathID = UnityEngine.Rendering.SelfUniversal.ShaderPathID;
 using UnityEditor.ShaderGraph;
 using UnityEditor.Rendering.Universal.ShaderGraph;
 using UnityEditor.Rendering.Universal.ShaderGUI;
@@ -48,7 +48,7 @@ namespace Unity.Rendering.Universal
             }
             else
             {
-                ShaderPathID pathID = UnityEngine.Rendering.Universal.ShaderUtils.GetEnumFromPath(shader.name);
+                ShaderPathID pathID = UnityEngine.Rendering.SelfUniversal.ShaderUtils.GetEnumFromPath(shader.name);
                 return (ShaderID)pathID;
             }
         }

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine.Serialization;
 using UnityEngine.Assertions;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// Holds information about whether to override certain camera rendering options from the render pipeline asset.

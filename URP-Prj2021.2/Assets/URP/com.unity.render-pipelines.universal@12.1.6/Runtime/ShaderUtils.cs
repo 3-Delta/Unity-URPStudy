@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     public enum ShaderPathID
     {

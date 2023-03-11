@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using Unity.Collections;
-using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.Rendering.SelfUniversal.Internal;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     class DeferredShaderData : IDisposable
     {

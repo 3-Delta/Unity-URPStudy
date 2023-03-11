@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine.Analytics;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 

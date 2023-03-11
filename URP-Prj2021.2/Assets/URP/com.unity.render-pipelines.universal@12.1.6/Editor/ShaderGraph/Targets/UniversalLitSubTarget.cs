@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 using UnityEditor.ShaderGraph.Legacy;
 
 using static UnityEditor.Rendering.Universal.ShaderGraph.SubShaderUtils;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using static Unity.Rendering.Universal.ShaderUtils;
 
 namespace UnityEditor.Rendering.Universal.ShaderGraph
@@ -67,7 +67,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
             context.AddAssetDependency(kSourceCodeGuid, AssetCollection.Flags.SourceDependency);
             base.Setup(ref context);
 
-            var universalRPType = typeof(UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset);
+            var universalRPType = typeof(UnityEngine.Rendering.SelfUniversal.UniversalRenderPipelineAsset);
             if (!context.HasCustomEditorForRenderPipeline(universalRPType))
             {
                 var gui = typeof(ShaderGraphLitGUI);

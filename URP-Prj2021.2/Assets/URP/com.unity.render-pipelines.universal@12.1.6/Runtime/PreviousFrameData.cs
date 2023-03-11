@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     internal sealed class PreviousFrameData
     {

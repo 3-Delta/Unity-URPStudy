@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     public abstract class DebugDisplaySettingsPanel : IDebugDisplaySettingsPanelDisposable
     {

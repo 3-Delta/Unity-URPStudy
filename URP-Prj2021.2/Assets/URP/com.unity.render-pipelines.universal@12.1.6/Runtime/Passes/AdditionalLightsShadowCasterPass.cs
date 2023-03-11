@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     /// <summary>
     /// Renders a shadow map atlas for additional shadow-casting Lights.

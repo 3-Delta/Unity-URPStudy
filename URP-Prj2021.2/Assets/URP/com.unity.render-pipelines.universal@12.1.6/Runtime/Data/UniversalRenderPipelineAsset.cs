@@ -10,7 +10,7 @@ using System.Linq;
 using UnityEngine.Serialization;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     public enum ShadowQuality
     {

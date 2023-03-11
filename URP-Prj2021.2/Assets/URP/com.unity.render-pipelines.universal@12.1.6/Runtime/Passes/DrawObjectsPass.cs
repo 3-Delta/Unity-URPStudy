@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Profiling;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     /// <summary>
     /// Draw  objects into the given color and depth target

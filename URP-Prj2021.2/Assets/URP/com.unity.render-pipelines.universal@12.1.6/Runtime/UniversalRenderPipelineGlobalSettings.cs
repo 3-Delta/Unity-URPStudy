@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine.Serialization;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// Universal Render Pipeline's Global Settings.

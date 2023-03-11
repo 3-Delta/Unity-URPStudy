@@ -4,7 +4,7 @@ using Unity.Jobs;
 using UnityEngine.Jobs;
 using UnityEngine.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal abstract class DecalChunk : IDisposable
     {

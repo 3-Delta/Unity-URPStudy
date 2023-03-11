@@ -1,7 +1,7 @@
 namespace UnityEditor.Rendering.Universal
 {
     using UnityEngine;
-    using UnityEngine.Rendering.Universal;
+    using UnityEngine.Rendering.SelfUniversal;
     using CED = CoreEditorDrawer<UniversalRenderPipelineSerializedCamera>;
 
     static partial class UniversalRenderPipelineCameraUI

@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using UnityEditor;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     // Copy of UnityEditor.Rendering.HighDefinition.DisplacableRectHandles
     class ProjectedTransform

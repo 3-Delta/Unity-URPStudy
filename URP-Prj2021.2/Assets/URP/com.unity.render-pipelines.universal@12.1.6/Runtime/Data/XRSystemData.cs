@@ -4,7 +4,7 @@ using UnityEditor.ProjectWindowCallback;
 #endif
 using System;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     [Serializable]
     public class XRSystemData : ScriptableObject

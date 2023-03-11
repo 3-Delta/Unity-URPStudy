@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using Object = UnityEngine.Object;
 
 namespace UnityEditor.Rendering.Universal

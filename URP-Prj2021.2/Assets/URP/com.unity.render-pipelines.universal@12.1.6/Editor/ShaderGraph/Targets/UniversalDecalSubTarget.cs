@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using UnityEditor.ShaderGraph.Legacy;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using UnityEditor.ShaderGraph.Internal;
 
 namespace UnityEditor.Rendering.Universal.ShaderGraph
@@ -77,7 +77,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         public override void Setup(ref TargetSetupContext context)
         {
             context.AddAssetDependency(kSourceCodeGuid, AssetCollection.Flags.SourceDependency);
-            context.AddCustomEditorForRenderPipeline("UnityEditor.Rendering.Universal.DecalShaderGraphGUI", typeof(UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset)); // TODO: This should be owned by URP
+            context.AddCustomEditorForRenderPipeline("UnityEditor.Rendering.Universal.DecalShaderGraphGUI", typeof(UnityEngine.Rendering.SelfUniversal.UniversalRenderPipelineAsset)); // TODO: This should be owned by URP
 
             {
                 SubShaderDescriptor subShader = SubShaders.Decal;

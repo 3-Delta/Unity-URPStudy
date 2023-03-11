@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Linq;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using System.Collections.Generic;
 
 namespace UnityEditor.Rendering.Universal

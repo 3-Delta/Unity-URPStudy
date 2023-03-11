@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.XR;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal partial class XRSystem
     {

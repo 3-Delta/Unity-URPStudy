@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using UnityEngine.Assertions;
-using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.Rendering.SelfUniversal.Internal;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal enum DecalSurfaceData
     {

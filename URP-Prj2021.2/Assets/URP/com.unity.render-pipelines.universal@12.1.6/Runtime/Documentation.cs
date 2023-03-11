@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     [Conditional("UNITY_EDITOR")]
     internal class URPHelpURLAttribute : CoreRPHelpURLAttribute

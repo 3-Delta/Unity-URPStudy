@@ -13,7 +13,7 @@ using static Unity.Mathematics.math;
 // TODO Make sure GPU buffers are uploaded without copying into Unity CommandBuffer memory
 // TODO BakedLit.shader has a Universal2D pass, but Unlit.shader doesn't have?
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     // Customization per platform.
     static class DeferredConfig

@@ -1,7 +1,7 @@
 using UnityEngine;
 using NameAndTooltip = UnityEngine.Rendering.DebugUI.Widget.NameAndTooltip;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     class DebugDisplaySettingsMaterial : IDebugDisplaySettingsData
     {

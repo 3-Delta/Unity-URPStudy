@@ -1,7 +1,7 @@
 using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
 #else

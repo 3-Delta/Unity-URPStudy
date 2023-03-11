@@ -2,7 +2,7 @@
 
 #if ENABLE_VR && ENABLE_XR_MODULE
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal struct XRLayout
     {

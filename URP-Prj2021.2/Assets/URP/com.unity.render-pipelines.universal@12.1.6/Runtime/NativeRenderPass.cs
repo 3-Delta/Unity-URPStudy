@@ -5,7 +5,7 @@ using Unity.Collections;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     // 主要是为了subpass设计
     // subpass的目的是：

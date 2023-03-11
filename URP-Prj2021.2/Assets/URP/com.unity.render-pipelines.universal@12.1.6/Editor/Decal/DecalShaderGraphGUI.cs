@@ -2,8 +2,8 @@ using System;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.Rendering.SelfUniversal;
+using UnityEngine.Rendering.SelfUniversal.Internal;
 
 namespace UnityEditor.Rendering.Universal
 {

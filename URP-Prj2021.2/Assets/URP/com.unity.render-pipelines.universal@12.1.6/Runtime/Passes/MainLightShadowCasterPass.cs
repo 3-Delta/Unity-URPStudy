@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     /// <summary>
     /// Renders a shadow map for the main Light.

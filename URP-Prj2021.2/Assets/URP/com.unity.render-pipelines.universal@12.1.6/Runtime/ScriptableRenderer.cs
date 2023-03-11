@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Profiling;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     ///  Class <c>ScriptableRenderer</c> implements a rendering strategy. It describes how culling and lighting works and

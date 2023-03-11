@@ -35,7 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     namespace LibTessDotNet
     {

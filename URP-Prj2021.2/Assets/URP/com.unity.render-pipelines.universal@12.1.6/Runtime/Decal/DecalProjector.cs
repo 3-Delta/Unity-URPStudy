@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>The scaling mode to apply to decals that use the Decal Projector.</summary>
     public enum DecalScaleMode

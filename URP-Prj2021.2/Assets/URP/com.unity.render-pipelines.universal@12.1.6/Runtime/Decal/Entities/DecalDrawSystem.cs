@@ -1,6 +1,6 @@
 using Unity.Collections;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// Abstract class that render decals using <see cref="DecalDrawCallChunk"/>.

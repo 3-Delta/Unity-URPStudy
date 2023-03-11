@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     // TODO: xmldoc
     public interface IPostProcessComponent
@@ -11,7 +11,7 @@ namespace UnityEngine.Rendering.Universal
     }
 }
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     // TODO: TAA
     // TODO: Motion blur

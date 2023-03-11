@@ -1,6 +1,6 @@
 using System;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     /// <summary>
     /// Calculate min and max depth per screen tile for tiled-based deferred shading.

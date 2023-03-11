@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     // This structure is designed to be Burst friendly.
     // It can be copied by value.

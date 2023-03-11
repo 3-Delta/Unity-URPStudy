@@ -34,7 +34,7 @@
 using System;
 using System.Diagnostics;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     using Real = System.Single;
     namespace LibTessDotNet

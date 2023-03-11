@@ -1,7 +1,7 @@
 using System;
 using Unity.Collections;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// Contains culling results.

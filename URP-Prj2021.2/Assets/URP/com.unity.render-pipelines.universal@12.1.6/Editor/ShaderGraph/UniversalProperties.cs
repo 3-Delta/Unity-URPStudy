@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ShaderGraph;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEditor.Rendering.Universal.ShaderGraph;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 
 namespace UnityEditor.Rendering.Universal
 {

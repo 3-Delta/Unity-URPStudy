@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal {
+namespace UnityEngine.Rendering.SelfUniversal {
 
     public class Utils {
         public static bool IsMobile() {

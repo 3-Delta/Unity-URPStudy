@@ -4,7 +4,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEditor.ShortcutManagement;
 using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using static UnityEditorInternal.EditMode;
 
 namespace UnityEditor.Rendering.Universal

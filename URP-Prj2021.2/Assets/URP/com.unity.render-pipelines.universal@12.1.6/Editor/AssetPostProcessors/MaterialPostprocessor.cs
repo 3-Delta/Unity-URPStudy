@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor.Rendering.Universal.ShaderGUI;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using static Unity.Rendering.Universal.ShaderUtils;
 
 namespace UnityEditor.Rendering.Universal

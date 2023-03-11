@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.Rendering.SelfUniversal.Internal;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal class DecalDrawDBufferSystem : DecalDrawSystem
     {

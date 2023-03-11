@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using UnityEngine.Experimental.Rendering;
 using Unity.Mathematics;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal class LightCookieManager : IDisposable
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     /// <summary>
     /// System used for skipping culling. It is used with <see cref="Graphics.DrawMesh"/> as it already handles culling.

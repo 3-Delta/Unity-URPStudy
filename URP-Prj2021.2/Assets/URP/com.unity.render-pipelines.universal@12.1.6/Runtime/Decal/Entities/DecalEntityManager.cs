@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using UnityEngine.Assertions;
 using UnityEngine.Jobs;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal class DecalEntityIndexer
     {

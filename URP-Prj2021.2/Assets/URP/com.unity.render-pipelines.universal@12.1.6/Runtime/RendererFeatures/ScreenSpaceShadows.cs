@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     [Serializable]
     internal class ScreenSpaceShadowsSettings

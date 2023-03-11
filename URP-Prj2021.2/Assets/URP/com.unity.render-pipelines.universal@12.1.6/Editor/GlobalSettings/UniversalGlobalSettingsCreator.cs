@@ -1,11 +1,11 @@
 using System.IO;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.SelfUniversal;
 using UnityEngine.Rendering;
 using UnityEditor;
 using UnityEditor.Rendering;
 
-namespace UnityEngine.Rendering.Universal
+namespace UnityEngine.Rendering.SelfUniversal
 {
     internal class UniversalGlobalSettingsCreator : UnityEditor.ProjectWindowCallback.EndNameEditAction
     {

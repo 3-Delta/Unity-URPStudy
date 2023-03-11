@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 
-namespace UnityEngine.Rendering.Universal.Internal
+namespace UnityEngine.Rendering.SelfUniversal.Internal
 {
     /// <summary>
     /// Computes and submits lighting data to the GPU.
@@ -41,6 +41,8 @@ namespace UnityEngine.Rendering.Universal.Internal
             public static int _AdditionalLightsLayerMasksPID;
         }
         
+        int m_DirectionalLightCount;
+        
         Vector4[] m_AdditionalLightPositions;
         Vector4[] m_AdditionalLightColors;
         Vector4[] m_AdditionalLightAttenuations;
@@ -54,8 +56,6 @@ namespace UnityEngine.Rendering.Universal.Internal
         // custer渲染，tile渲染
         bool m_UseClusteredRendering;
         
-        int m_DirectionalLightCount;
-        
         int m_ActualTileWidth;
         int2 m_TileResolution;
         int m_RequestedTileWidth;
@@ -63,11 +63,12 @@ namespace UnityEngine.Rendering.Universal.Internal
         int m_ZBinOffset;
 
         JobHandle m_CullingHandle;
+        
         NativeArray<ZBin> m_ZBinsNA;
         NativeArray<uint> m_TileLightMasksNA;
 
-        ComputeBuffer m_ZBinCompBuffer;
-        ComputeBuffer m_TileCompBuffer;
+        ComputeBuffer m_ZBinCompBuffer; // float4
+        ComputeBuffer m_TileCompBuffer; // float4
 
         private LightCookieManager m_LightCookieManager;
 
@@ -147,35 +148,39 @@ namespace UnityEngine.Rendering.Universal.Internal
             }
         }
 
+        // 先于Setup执行
         internal void ProcessLights(ref RenderingData renderingData)
         {
-            if (m_UseClusteredRendering)
-            {
+            if (m_UseClusteredRendering) {
                 var camera = renderingData.cameraData.camera;
                 var screenResolution = math.int2(renderingData.cameraData.pixelWidth, renderingData.cameraData.pixelHeight);
 
+                // https://zhuanlan.zhihu.com/p/489839605
+                // CullResults的VisibleLights 是根据光源距离相机的远近进行排序的
                 var lightCount = renderingData.lightData.visibleLights.Length;
                 var lightOffset = 0;
-                while (lightOffset < lightCount && renderingData.lightData.visibleLights[lightOffset].lightType == LightType.Directional)
-                {
+                while (lightOffset < lightCount && renderingData.lightData.visibleLights[lightOffset].lightType == LightType.Directional) {
                     // 计算平行光的数量
                     lightOffset++;
                 }
 
+                // todo 这段代码有问题吧？
                 if (lightOffset == lightCount) {
-                    // 全部都是平行光
+                    // 如果全部都是平行光
                     lightOffset = 0;
                 }
                 
-                // 非平行光数量
                 lightCount -= lightOffset;
                 
                 // 非mainLight的平行光数量
-                m_DirectionalLightCount = lightOffset;
+                this.m_DirectionalLightCount = lightOffset;
+                
                 if (renderingData.lightData.mainLightIndex != -1) {
-                    m_DirectionalLightCount -= 1;
+                    this.m_DirectionalLightCount -= 1;
                 }
 
+                // 如果不都是平行光，则获取所有非平行光
+                // 如果都是平行光，则获取所有光
                 var visibleLights = renderingData.lightData.visibleLights.GetSubArray(lightOffset, lightCount);
                 var lightsPerTile = UniversalRenderPipeline.lightsPerTile;
                 var wordsPerTile = lightsPerTile / 32;
@@ -189,7 +194,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                     m_TileResolution = (screenResolution + m_ActualTileWidth - 1) / m_ActualTileWidth;
                 }
                 while ((m_TileResolution.x * m_TileResolution.y * wordsPerTile) > (UniversalRenderPipeline.maxTileVec4s * 4));
-
+                
                 // URP-Prj2021.2\Assets\URP\com.unity.render-pipelines.universal@12.1.6\Runtime\Tangent-Fov.png
                 var fovHalfHeight = math.tan(math.radians(camera.fieldOfView * 0.5f));
                 // TODO: Make this work with VR
@@ -205,15 +210,18 @@ namespace UnityEngine.Rendering.Universal.Internal
                     因此在这段代码中进行了math.sqrt计算。
                 */
                 var unLinearZDiff = math.sqrt(camera.farClipPlane) - math.sqrt(camera.nearClipPlane);
+                // 每个z单元分几块
                 var maxZFactor = (float)UniversalRenderPipeline.maxZBins / unLinearZDiff;
                 m_ZBinFactor = maxZFactor;
                 m_ZBinOffset = (int)(math.sqrt(camera.nearClipPlane) * m_ZBinFactor);
                 
-                // z分块
+                // z分块(4096)
                 var binCount = (int)(math.sqrt(camera.farClipPlane) * m_ZBinFactor) - m_ZBinOffset;
                 // Must be a multiple of 4 to be able to alias to vec4
                 binCount = ((binCount + 3) / 4) * 4;
                 binCount = math.min(UniversalRenderPipeline.maxZBins, binCount);
+                
+// Debug.LogError("screenResolution:" + screenResolution + "  m_ActualTileWidth:" + m_ActualTileWidth + "  m_TileResolution:" + m_TileResolution + "  m_ZBinFactor:" + m_ZBinFactor + "  m_ZBinOffset:" + m_ZBinOffset + "  binCount:" + binCount);
                 
                 this.m_ZBinsNA = new NativeArray<ZBin>(binCount, Allocator.TempJob);
                 Assert.AreEqual(UnsafeUtility.SizeOf<uint>(), UnsafeUtility.SizeOf<ZBin>());
@@ -387,12 +395,14 @@ namespace UnityEngine.Rendering.Universal.Internal
                 var useClusteredRendering = m_UseClusteredRendering;
                 if (useClusteredRendering)
                 {
+                    // 确保光源裁切完成，主要是填充m_ZBinsNA和m_TileLightMasksNA
+                    // 然后下面传递给GPU
                     m_CullingHandle.Complete();
 
                     this.m_ZBinCompBuffer.SetData(this.m_ZBinsNA.Reinterpret<float4>(UnsafeUtility.SizeOf<ZBin>()), 0, 0, this.m_ZBinsNA.Length / 4);
                     this.m_TileCompBuffer.SetData(this.m_TileLightMasksNA.Reinterpret<float4>(UnsafeUtility.SizeOf<uint>()), 0, 0, this.m_TileLightMasksNA.Length / 4);
 
-                    cmd.SetGlobalInteger("_AdditionalLightsDirectionalCount", m_DirectionalLightCount);
+                    cmd.SetGlobalInteger("_AdditionalLightsDirectionalCount", this.m_DirectionalLightCount);
                     cmd.SetGlobalInteger("_AdditionalLightsZBinOffset", m_ZBinOffset);
                     cmd.SetGlobalFloat("_AdditionalLightsZBinScale", m_ZBinFactor);
                     cmd.SetGlobalVector("_AdditionalLightsTileScale", renderingData.cameraData.pixelRect.size / (float)m_ActualTileWidth);
