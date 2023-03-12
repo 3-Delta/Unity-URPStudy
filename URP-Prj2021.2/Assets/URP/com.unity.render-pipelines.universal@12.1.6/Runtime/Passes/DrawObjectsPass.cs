@@ -29,8 +29,9 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
 
             m_ProfilerTag = profilerTag;
             m_ProfilingSampler = new ProfilingSampler(profilerTag);
-            foreach (ShaderTagId sid in shaderTagIds)
+            foreach (ShaderTagId sid in shaderTagIds) {
                 m_ShaderTagIdList.Add(sid);
+            }
             renderPassEvent = evt;
             m_FilteringSettings = new FilteringSettings(renderQueueRange, layerMask);
             m_RenderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);

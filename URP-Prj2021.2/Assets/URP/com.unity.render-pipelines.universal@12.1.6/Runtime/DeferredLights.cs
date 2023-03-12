@@ -865,9 +865,9 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 m_stencilVisLightOffsets.Dispose();
         }
 
-        internal static StencilState OverwriteStencil(StencilState s, int stencilWriteMask)
+        internal static StencilState OverwriteStencil(StencilState source, int stencilWriteMask)
         {
-            if (!s.enabled)
+            if (!source.enabled)
             {
                 return new StencilState(
                     true,
@@ -877,18 +877,18 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 );
             }
 
-            CompareFunction funcFront = s.compareFunctionFront != CompareFunction.Disabled ? s.compareFunctionFront : CompareFunction.Always;
-            CompareFunction funcBack = s.compareFunctionBack != CompareFunction.Disabled ? s.compareFunctionBack : CompareFunction.Always;
-            StencilOp passFront = s.passOperationFront;
-            StencilOp failFront = s.failOperationFront;
-            StencilOp zfailFront = s.zFailOperationFront;
-            StencilOp passBack = s.passOperationBack;
-            StencilOp failBack = s.failOperationBack;
-            StencilOp zfailBack = s.zFailOperationBack;
+            CompareFunction funcFront = source.compareFunctionFront != CompareFunction.Disabled ? source.compareFunctionFront : CompareFunction.Always;
+            CompareFunction funcBack = source.compareFunctionBack != CompareFunction.Disabled ? source.compareFunctionBack : CompareFunction.Always;
+            StencilOp passFront = source.passOperationFront;
+            StencilOp failFront = source.failOperationFront;
+            StencilOp zfailFront = source.zFailOperationFront;
+            StencilOp passBack = source.passOperationBack;
+            StencilOp failBack = source.failOperationBack;
+            StencilOp zfailBack = source.zFailOperationBack;
 
             return new StencilState(
                 true,
-                (byte)(s.readMask & 0x0F), (byte)(s.writeMask | stencilWriteMask),
+                (byte)(source.readMask & 0x0F), (byte)(source.writeMask | stencilWriteMask),
                 funcFront, passFront, failFront, zfailFront,
                 funcBack, passBack, failBack, zfailBack
             );
