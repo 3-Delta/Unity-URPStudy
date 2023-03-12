@@ -6,6 +6,7 @@ namespace UnityEngine.Rendering.SelfUniversal
 
     internal class TransparentSettingsPass : ScriptableRenderPass
     {
+        // 半透明物体接收阴影
         bool _mShouldTransparentReceiveShadowsTransparent;
 
         const string m_ProfilerTag = "Transparent Settings Pass";
