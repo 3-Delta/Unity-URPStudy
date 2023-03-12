@@ -401,6 +401,8 @@ namespace UnityEngine.Rendering.SelfUniversal
             }
 
             // Special path for depth only offscreen cameras. Only write opaques + transparents.
+            // 如果camera的RenderTexture被拖拽了一个depth的RT，则渲染不透明+天空+半透明
+            // 然后直接return
             bool isOffscreenDepthTexture = cameraData.targetTexture != null && cameraData.targetTexture.format == RenderTextureFormat.Depth;
             if (isOffscreenDepthTexture)
             {
@@ -510,8 +512,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 // If only post process requires depth texture, we can re-use depth buffer from main geometry pass instead of enqueuing a depth copy pass, but no proper API to do that for now, so resort to depth copy pass for now
                 m_CopyDepthPass.renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
             }
-
-
+            
             createColorTexture |= RequiresIntermediateColorTexture(ref cameraData);
             createColorTexture |= renderPassInputs.requiresColorTexture;
             createColorTexture &= !isPreviewCamera;
@@ -570,8 +571,11 @@ namespace UnityEngine.Rendering.SelfUniversal
                 bool intermediateRenderTexture = createColorTexture || createDepthTexture;
 
                 // Doesn't create texture for Overlay cameras as they are already overlaying on top of created textures.
-                if (intermediateRenderTexture)
+                if (intermediateRenderTexture) {
+                    // 上面的m_ActiveCameraColorAttachment和m_ActiveCameraDepthAttachment只是和shader中的id关联起来了，但是还没有确切的RT资源
+                    // 这里内部GetTemporaryRT给RT资源
                     CreateCameraRenderTarget(context, ref cameraTargetDescriptor, useDepthPriming);
+                }
             }
             else
             {
@@ -630,14 +634,17 @@ namespace UnityEngine.Rendering.SelfUniversal
 
             bool hasPassesAfterPostProcessing = activeRenderPassQueue.Find(x => x.renderPassEvent == RenderPassEvent.AfterRenderingPostProcessing) != null;
 
-            if (mainLightShadows)
+            if (mainLightShadows) {
                 EnqueuePass(m_MainLightShadowCasterPass);
+            }
 
-            if (additionalLightShadows)
+            if (additionalLightShadows) {
                 EnqueuePass(this.m_AddiLightsShadowCasterPass);
+            }
 
             if (requiresDepthPrepass)
             {
+                // 深度法线预处理
                 if (renderPassInputs.requiresNormalsTexture)
                 {
                     if (this.actualRenderingMode == RenderingMode.Deferred)
@@ -669,6 +676,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 }
                 else
                 {
+                    // 深度预处理
                     // Deferred renderer does not require a depth-prepass to generate samplable depth texture.
                     if (this.actualRenderingMode != RenderingMode.Deferred)
                     {
@@ -1052,6 +1060,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             return inputSummary;
         }
 
+        // 给m_ActiveCameraColorAttachment和m_ActiveCameraDepthAttachment绑定具体的RT资源
         void CreateCameraRenderTarget(ScriptableRenderContext context, ref RenderTextureDescriptor descriptor, bool primedDepth)
         {
             CommandBuffer cmd = CommandBufferPool.Get();
@@ -1079,7 +1088,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                         ConfigureCameraColorTarget(colorId.id);
                     }
                     
-                    // 设置ColorBuffer
+                    // 设置ColorBuffer，因为是双缓冲，所以这里需要重新赋值
                     m_ActiveCameraColorAttachment = colorId;
                     
                     cmd.SetGlobalTexture("_CameraColorTexture", m_ActiveCameraColorAttachment.id);

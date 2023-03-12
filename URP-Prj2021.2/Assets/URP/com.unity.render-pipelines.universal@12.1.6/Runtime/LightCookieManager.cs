@@ -352,7 +352,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             ShaderBitArray m_CookieEnableBitsCpuData;
 
             // Compute buffer counterparts for the CPU data
-            ComputeBuffer m_WorldToLightBuffer;    // TODO: WorldToLight matrices should be general property of lights!!
+            ComputeBuffer m_WorldToLightBuffer;    // TODO: WorldToLight matrices should be general property of orderedLights!!
             ComputeBuffer m_AtlasUVRectBuffer;
             ComputeBuffer m_LightTypeBuffer;
 
@@ -429,7 +429,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             {
                 if (isUploaded)
                 {
-                    // Set all lights to disabled/invalid state
+                    // Set all orderedLights to disabled/invalid state
                     m_CookieEnableBitsCpuData.Clear();
                     cmd.SetGlobalFloatArray(ShaderProperty.additionalLightsCookieEnableBits, m_CookieEnableBitsCpuData.data);
                     isUploaded = false;
@@ -533,7 +533,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 isMainLightAvailable = SetupMainLight(cmd, ref mainLight);
             }
 
-            // Additional lights, N spot and point lights in atlas
+            // Additional orderedLights, N spot and point orderedLights in atlas
             bool isAdditionalLightsAvailable = lightData.additionalLightsCount > 0;
             if (isAdditionalLightsAvailable)
             {
@@ -556,7 +556,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 m_AdditionalLightsCookieShaderData?.Clear(cmd);
             }
 
-            // Main and additional lights are merged into one keyword to reduce variants.
+            // Main and additional orderedLights are merged into one keyword to reduce variants.
             IsKeywordLightCookieEnabled = isMainLightAvailable || isAdditionalLightsAvailable;
             CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.LightCookies, IsKeywordLightCookieEnabled);
         }
@@ -584,7 +584,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             }
             else
             {
-                // Make sure we erase stale data in case the main light is disabled but cookie system is enabled (for additional lights).
+                // Make sure we erase stale data in case the main light is disabled but cookie system is enabled (for additional orderedLights).
                 cmd.SetGlobalTexture(ShaderProperty.mainLightTexture, Texture2D.whiteTexture);
                 cmd.SetGlobalMatrix(ShaderProperty.mainLightWorldToLight, Matrix4x4.identity);
                 cmd.SetGlobalFloat(ShaderProperty.mainLightCookieTextureFormat, (float)LightCookieShaderFormat.None);
@@ -646,7 +646,7 @@ namespace UnityEngine.Rendering.SelfUniversal
 
             int validLightCount = FilterAndValidateAdditionalLights(ref lightData, m_WorkMem.lightMappings);
 
-            // Early exit if no valid cookie lights
+            // Early exit if no valid cookie orderedLights
             if (validLightCount <= 0)
                 return false;
 
@@ -672,7 +672,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             int lightBufferOffset = 0;
             int validLightCount = 0;
 
-            // Warn on dropped lights
+            // Warn on dropped orderedLights
 
             int maxLights = Math.Min(lightData.visibleLights.Length, validLightMappings.Length);
             for (int i = 0; i < maxLights; i++)
@@ -685,12 +685,12 @@ namespace UnityEngine.Rendering.SelfUniversal
 
                 Light light = lightData.visibleLights[i].light;
 
-                // Skip lights without a cookie texture
+                // Skip orderedLights without a cookie texture
                 if (light.cookie == null)
                     continue;
 
-                // Only spot and point lights are supported.
-                // Directional lights basically work,
+                // Only spot and point orderedLights are supported.
+                // Directional orderedLights basically work,
                 // but would require a lot of constants for the uv transform parameters
                 // and there are very few use cases for multiple global cookies.
                 var lightType = lightData.visibleLights[i].lightType;
@@ -966,11 +966,11 @@ namespace UnityEngine.Rendering.SelfUniversal
             // Set all cookies disabled
             cookieEnableBits.Clear();
 
-            // NOTE: technically, we don't need to upload constants again if we knew the lights, atlas (rects) or visible order haven't changed.
+            // NOTE: technically, we don't need to upload constants again if we knew the orderedLights, atlas (rects) or visible order haven't changed.
             // But detecting that, might be as time consuming as just doing the work.
 
-            // Fill shader data. Layout should match primary light data for additional lights.
-            // Currently it's the same as visible lights, but main light(s) dropped.
+            // Fill shader data. Layout should match primary light data for additional orderedLights.
+            // Currently it's the same as visible orderedLights, but main light(s) dropped.
             for (int i = 0; i < validUvRects.length; i++)
             {
                 int visIndex = validLightMappings[i].visibleLightIndex;

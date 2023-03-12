@@ -37,7 +37,10 @@ namespace UnityEngine.Rendering.SelfUniversal
 
             for (var i = binsStart; i <= binsEnd; i++)
             {
-                bins[i] = new ZBin { minIndex = ushort.MaxValue, maxIndex = ushort.MaxValue };
+                bins[i] = new ZBin {
+                    minIndex = ushort.MaxValue, 
+                    maxIndex = ushort.MaxValue
+                };
             }
 
             for (var lightIndex = 0; lightIndex < minMaxZs.Length; lightIndex++)

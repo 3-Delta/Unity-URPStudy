@@ -164,9 +164,8 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                     lightOffset++;
                 }
 
-                // todo 这段代码有问题吧？
+                // todo 这段代码有问题吧？通过查看urp14的源码，发现的确存在问题
                 if (lightOffset == lightCount) {
-                    // 如果全部都是平行光
                     lightOffset = 0;
                 }
                 
@@ -174,14 +173,12 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 
                 // 非mainLight的平行光数量
                 this.m_DirectionalLightCount = lightOffset;
-                
                 if (renderingData.lightData.mainLightIndex != -1) {
                     this.m_DirectionalLightCount -= 1;
                 }
-
-                // 如果不都是平行光，则获取所有非平行光
-                // 如果都是平行光，则获取所有光
-                var visibleLights = renderingData.lightData.visibleLights.GetSubArray(lightOffset, lightCount);
+                
+                // cullResult的非平行光
+                var visibleUnDirLights = renderingData.lightData.visibleLights.GetSubArray(lightOffset, lightCount);
                 var lightsPerTile = UniversalRenderPipeline.lightsPerTile;
                 var wordsPerTile = lightsPerTile / 32;
 
@@ -215,7 +212,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 m_ZBinFactor = maxZFactor;
                 m_ZBinOffset = (int)(math.sqrt(camera.nearClipPlane) * m_ZBinFactor);
                 
-                // z分块(4096)
+                // 视锥体区间 z分块(4096)
                 var binCount = (int)(math.sqrt(camera.farClipPlane) * m_ZBinFactor) - m_ZBinOffset;
                 // Must be a multiple of 4 to be able to alias to vec4
                 binCount = ((binCount + 3) / 4) * 4;
@@ -226,76 +223,82 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 this.m_ZBinsNA = new NativeArray<ZBin>(binCount, Allocator.TempJob);
                 Assert.AreEqual(UnsafeUtility.SizeOf<uint>(), UnsafeUtility.SizeOf<ZBin>());
 
-                using var minMaxZs = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
+                // 此时lightCount是非平行光数量
+                
+                using var minMaxZsNA = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
                 // We allocate double array length because the sorting algorithm needs swap space to work in.
-                using var meanZs = new NativeArray<float>(lightCount * 2, Allocator.TempJob);
+                using var meanZsNA = new NativeArray<float>(lightCount * 2, Allocator.TempJob);
 
                 Matrix4x4 worldToViewMatrix = renderingData.cameraData.GetViewMatrix();
                 var minMaxZJob = new MinMaxZJob
                 {
                     worldToViewMatrix = worldToViewMatrix,
-                    lights = visibleLights,
-                    minMaxZs = minMaxZs,
-                    meanZs = meanZs
+                    lights = visibleUnDirLights,
+                    minMaxZs = minMaxZsNA,
+                    meanZs = meanZsNA
                 };
                 // Innerloop batch count of 32 is not special, just a handwavy amount to not have too much scheduling overhead nor too little parallelism.
-                var minMaxZHandle = minMaxZJob.ScheduleParallel(lightCount, 32, new JobHandle());
+                var minMaxZJobHandle = minMaxZJob.ScheduleParallel(lightCount, 32, new JobHandle());
 
                 // Allocator.TempJob存在4帧
                 // We allocate double array length because the sorting algorithm needs swap space to work in.
-                using var indices = new NativeArray<int>(lightCount * 2, Allocator.TempJob);
-                var radixSortJob = new RadixSortJob
+                using var indicesNA = new NativeArray<int>(lightCount * 2, Allocator.TempJob);
+                // 基数排序
+                var zSortJob = new RadixSortJob
                 {
                     // Floats can be sorted bitwise with no special handling if positive floats only
-                    keys = meanZs.Reinterpret<uint>(),
-                    indices = indices
+                    keys = meanZsNA.Reinterpret<uint>(),
+                    indices = indicesNA
                 };
-                var zSortHandle = radixSortJob.Schedule(minMaxZHandle);
+                var zSortJobHandle = zSortJob.Schedule(minMaxZJobHandle);
 
-                var reorderedLights = new NativeArray<VisibleLight>(lightCount, Allocator.TempJob);
-                var reorderedMinMaxZs = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
+                #region 按照z重新排序
+                var reorderedLightsNA = new NativeArray<VisibleLight>(lightCount, Allocator.TempJob);
+                var reorderedMinMaxZsNA = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
 
                 var reorderLightsJob = new ReorderJob<VisibleLight> {
-                    indices = indices, input = visibleLights, output = reorderedLights
+                    indices = indicesNA, input = visibleUnDirLights, output = reorderedLightsNA
                 };
-                var reorderLightsHandle = reorderLightsJob.ScheduleParallel(lightCount, 32, zSortHandle);
+                var reorderLightsJobHandle = reorderLightsJob.ScheduleParallel(lightCount, 32, zSortJobHandle);
 
                 var reorderMinMaxZsJob = new ReorderJob<LightMinMaxZ> {
-                    indices = indices, input = minMaxZs, output = reorderedMinMaxZs
+                    indices = indicesNA, input = minMaxZsNA, output = reorderedMinMaxZsNA
                 };
-                var reorderMinMaxZsHandle = reorderMinMaxZsJob.ScheduleParallel(lightCount, 32, zSortHandle);
+                var reorderMinMaxZsJobHandle = reorderMinMaxZsJob.ScheduleParallel(lightCount, 32, zSortJobHandle);
 
                 var reorderHandle = JobHandle.CombineDependencies(
-                    reorderLightsHandle,
-                    reorderMinMaxZsHandle
+                    reorderLightsJobHandle,
+                    reorderMinMaxZsJobHandle
                 );
 
                 // JobHandle.ScheduleBatchedJobs：当你想要你的job开始执行时，可以调用这个函数flush调度的batch。不flush batch会导致调度延迟到主线程等待batch执行结果时才触发执行
                 JobHandle.ScheduleBatchedJobs();
+                #endregion
 
                 LightExtractionJob lightExtractionJob;
-                lightExtractionJob.lights = reorderedLights;
-                var lightTypes = lightExtractionJob.lightTypes = new NativeArray<LightType>(lightCount, Allocator.TempJob);
-                var radiuses = lightExtractionJob.radiuses = new NativeArray<float>(lightCount, Allocator.TempJob);
-                var directions = lightExtractionJob.directions = new NativeArray<float3>(lightCount, Allocator.TempJob);
-                var positions = lightExtractionJob.positions = new NativeArray<float3>(lightCount, Allocator.TempJob);
-                var coneRadiuses = lightExtractionJob.coneRadiuses = new NativeArray<float>(lightCount, Allocator.TempJob);
-                var lightExtractionHandle = lightExtractionJob.ScheduleParallel(lightCount, 32, reorderHandle);
+                lightExtractionJob.orderedLights = reorderedLightsNA;
+                var lightTypesNA = lightExtractionJob.lightTypesNA = new NativeArray<LightType>(lightCount, Allocator.TempJob);
+                var radiusesNA = lightExtractionJob.radiusesNA = new NativeArray<float>(lightCount, Allocator.TempJob);
+                var directionsNA = lightExtractionJob.directionsWSNA = new NativeArray<float3>(lightCount, Allocator.TempJob);
+                var positionsNA = lightExtractionJob.positionsWSNA = new NativeArray<float3>(lightCount, Allocator.TempJob);
+                var coneRadiusesNA = lightExtractionJob.coneRadiusesNA = new NativeArray<float>(lightCount, Allocator.TempJob);
+                
+                var lightExtractionJobHandle = lightExtractionJob.ScheduleParallel(lightCount, 32, reorderHandle);
 
                 var zBinningJob = new ZBinningJob
                 {
                     bins = this.m_ZBinsNA,
-                    minMaxZs = reorderedMinMaxZs,
+                    minMaxZs = reorderedMinMaxZsNA,
                     binOffset = m_ZBinOffset,
                     zFactor = m_ZBinFactor
                 };
-                var zBinningHandle = zBinningJob.ScheduleParallel((binCount + ZBinningJob.batchCount - 1) / ZBinningJob.batchCount, 1, reorderHandle);
-                reorderedMinMaxZs.Dispose(zBinningHandle);
+                var zBinningJobHandle = zBinningJob.ScheduleParallel((binCount + ZBinningJob.batchCount - 1) / ZBinningJob.batchCount, 1, reorderHandle);
+                reorderedMinMaxZsNA.Dispose(zBinningJobHandle);
 
                 // Must be a multiple of 4 to be able to alias to vec4
                 var lightMasksLength = (((wordsPerTile) * m_TileResolution + 3) / 4) * 4;
-                var horizontalLightMasks = new NativeArray<uint>(lightMasksLength.y, Allocator.TempJob);
-                var verticalLightMasks = new NativeArray<uint>(lightMasksLength.x, Allocator.TempJob);
+                var horizontalLightMasksNA = new NativeArray<uint>(lightMasksLength.y, Allocator.TempJob);
+                var verticalLightMasksNA = new NativeArray<uint>(lightMasksLength.x, Allocator.TempJob);
 
                 // Vertical slices along the x-axis
                 var verticalJob = new SliceCullingJob
@@ -305,41 +308,43 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                     viewForward = camera.transform.forward,
                     viewRight = camera.transform.right * fovHalfWidth,
                     viewUp = camera.transform.up * fovHalfHeight,
-                    lightTypes = lightTypes,
-                    radiuses = radiuses,
-                    directions = directions,
-                    positions = positions,
-                    coneRadiuses = coneRadiuses,
+                    lightTypes = lightTypesNA,
+                    radiuses = radiusesNA,
+                    directions = directionsNA,
+                    positions = positionsNA,
+                    coneRadiuses = coneRadiusesNA,
                     lightsPerTile = lightsPerTile,
-                    sliceLightMasks = verticalLightMasks
+                    sliceLightMasks = verticalLightMasksNA
                 };
-                var verticalHandle = verticalJob.ScheduleParallel(m_TileResolution.x, 1, lightExtractionHandle);
+                
+                var verticalJobHandle = verticalJob.ScheduleParallel(m_TileResolution.x, 1, lightExtractionJobHandle);
 
                 // Horizontal slices along the y-axis
                 var horizontalJob = verticalJob;
                 horizontalJob.scale = (float)m_ActualTileWidth / (float)screenResolution.y;
                 horizontalJob.viewRight = camera.transform.up * fovHalfHeight;
                 horizontalJob.viewUp = -camera.transform.right * fovHalfWidth;
-                horizontalJob.sliceLightMasks = horizontalLightMasks;
-                var horizontalHandle = horizontalJob.ScheduleParallel(m_TileResolution.y, 1, lightExtractionHandle);
+                horizontalJob.sliceLightMasks = horizontalLightMasksNA;
+                
+                var horizontalJobHandle = horizontalJob.ScheduleParallel(m_TileResolution.y, 1, lightExtractionJobHandle);
 
-                var slicesHandle = JobHandle.CombineDependencies(horizontalHandle, verticalHandle);
+                var slicesHandle = JobHandle.CombineDependencies(horizontalJobHandle, verticalJobHandle);
 
                 this.m_TileLightMasksNA = new NativeArray<uint>(((m_TileResolution.x * m_TileResolution.y * (wordsPerTile) + 3) / 4) * 4, Allocator.TempJob);
                 var sliceCombineJob = new SliceCombineJob
                 {
                     tileResolution = m_TileResolution,
                     wordsPerTile = wordsPerTile,
-                    sliceLightMasksH = horizontalLightMasks,
-                    sliceLightMasksV = verticalLightMasks,
+                    sliceLightMasksH = horizontalLightMasksNA,
+                    sliceLightMasksV = verticalLightMasksNA,
                     lightMasks = this.m_TileLightMasksNA
                 };
                 var sliceCombineHandle = sliceCombineJob.ScheduleParallel(m_TileResolution.y, 1, slicesHandle);
 
-                m_CullingHandle = JobHandle.CombineDependencies(sliceCombineHandle, zBinningHandle);
+                m_CullingHandle = JobHandle.CombineDependencies(sliceCombineHandle, zBinningJobHandle);
 
                 reorderHandle.Complete();
-                NativeArray<VisibleLight>.Copy(reorderedLights, 0, renderingData.lightData.visibleLights, lightOffset, lightCount);
+                NativeArray<VisibleLight>.Copy(reorderedLightsNA, 0, renderingData.lightData.visibleLights, lightOffset, lightCount);
 
                 var tempBias = new NativeArray<Vector4>(lightCount, Allocator.Temp);
                 var tempResolution = new NativeArray<int>(lightCount, Allocator.Temp);
@@ -347,9 +352,9 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
 
                 for (var i = 0; i < lightCount; i++)
                 {
-                    tempBias[indices[i]] = renderingData.shadowData.bias[lightOffset + i];
-                    tempResolution[indices[i]] = renderingData.shadowData.resolution[lightOffset + i];
-                    tempIndices[indices[i]] = lightOffset + i;
+                    tempBias[indicesNA[i]] = renderingData.shadowData.bias[lightOffset + i];
+                    tempResolution[indicesNA[i]] = renderingData.shadowData.resolution[lightOffset + i];
+                    tempIndices[indicesNA[i]] = lightOffset + i;
                 }
 
                 for (var i = 0; i < lightCount; i++)
@@ -363,14 +368,14 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 tempResolution.Dispose();
                 tempIndices.Dispose();
 
-                lightTypes.Dispose(m_CullingHandle);
-                radiuses.Dispose(m_CullingHandle);
-                directions.Dispose(m_CullingHandle);
-                positions.Dispose(m_CullingHandle);
-                coneRadiuses.Dispose(m_CullingHandle);
-                reorderedLights.Dispose(m_CullingHandle);
-                horizontalLightMasks.Dispose(m_CullingHandle);
-                verticalLightMasks.Dispose(m_CullingHandle);
+                lightTypesNA.Dispose(m_CullingHandle);
+                radiusesNA.Dispose(m_CullingHandle);
+                directionsNA.Dispose(m_CullingHandle);
+                positionsNA.Dispose(m_CullingHandle);
+                coneRadiusesNA.Dispose(m_CullingHandle);
+                reorderedLightsNA.Dispose(m_CullingHandle);
+                horizontalLightMasksNA.Dispose(m_CullingHandle);
+                verticalLightMasksNA.Dispose(m_CullingHandle);
                 JobHandle.ScheduleBatchedJobs();
             }
         }
@@ -458,7 +463,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
             UniversalRenderPipeline.InitializeLightConstants_Common(lights, lightIndex, out lightPos, out lightColor, out lightAttenuation, out lightSpotDir, out lightOcclusionProbeChannel);
             lightLayerMask = 0;
 
-            // When no lights are visible, main light will be set to -1.
+            // When no orderedLights are visible, main light will be set to -1.
             // In this case we initialize it to default values and return
             if (lightIndex < 0)
                 return;
@@ -594,8 +599,8 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
             int globalDirectionalLightsCount = 0;
             int additionalLightsCount = 0;
 
-            // Disable all directional lights from the perobject light indices
-            // Pipeline handles main light globally and there's no support for additional directional lights atm.
+            // Disable all directional orderedLights from the perobject light indices
+            // Pipeline handles main light globally and there's no support for additional directional orderedLights atm.
             for (int i = 0; i < visibleLights.Length; ++i)
             {
                 if (additionalLightsCount >= UniversalRenderPipeline.maxVisibleAdditionalLights)
@@ -614,7 +619,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 }
             }
 
-            // Disable all remaining lights we cannot fit into the global light buffer.
+            // Disable all remaining orderedLights we cannot fit into the global light buffer.
             for (int i = globalDirectionalLightsCount + additionalLightsCount; i < perObjectLightIndexMap.Length; ++i)
                 perObjectLightIndexMap[i] = -1;
 
@@ -623,7 +628,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
             if (m_UseStructuredBuffer && additionalLightsCount > 0)
             {
                 int lightAndReflectionProbeIndices = cullResults.lightAndReflectionProbeIndexCount;
-                Assertions.Assert.IsTrue(lightAndReflectionProbeIndices > 0, "Pipelines configures additional lights but per-object light and probe indices count is zero.");
+                Assertions.Assert.IsTrue(lightAndReflectionProbeIndices > 0, "Pipelines configures additional orderedLights but per-object light and probe indices count is zero.");
                 cullResults.FillLightAndReflectionProbeIndices(ShaderData.instance.GetLightIndicesBuffer(lightAndReflectionProbeIndices));
             }
 

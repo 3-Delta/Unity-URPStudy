@@ -9,27 +9,27 @@ namespace UnityEngine.Rendering.SelfUniversal
     struct LightExtractionJob : IJobFor
     {
         [ReadOnly]
-        public NativeArray<VisibleLight> lights;
+        public NativeArray<VisibleLight> orderedLights;
 
-        public NativeArray<LightType> lightTypes;
+        public NativeArray<LightType> lightTypesNA;
 
-        public NativeArray<float> radiuses;
+        public NativeArray<float> radiusesNA;
 
-        public NativeArray<float3> directions;
+        public NativeArray<float3> directionsWSNA;
 
-        public NativeArray<float3> positions;
+        public NativeArray<float3> positionsWSNA;
 
-        public NativeArray<float> coneRadiuses;
+        public NativeArray<float> coneRadiusesNA;
 
         public void Execute(int index)
         {
-            var light = lights[index];
+            var light = this.orderedLights[index];
             var localToWorldMatrix = (float4x4)light.localToWorldMatrix;
-            lightTypes[index] = light.lightType;
-            radiuses[index] = light.range;
-            directions[index] = localToWorldMatrix.c2.xyz;
-            positions[index] = localToWorldMatrix.c3.xyz;
-            coneRadiuses[index] = math.tan(math.radians(light.spotAngle * 0.5f)) * light.range;
+            this.lightTypesNA[index] = light.lightType;
+            this.radiusesNA[index] = light.range;
+            this.directionsWSNA[index] = localToWorldMatrix.c2.xyz;
+            this.positionsWSNA[index] = localToWorldMatrix.c3.xyz;
+            this.coneRadiusesNA[index] = math.tan(math.radians(light.spotAngle * 0.5f)) * light.range;
         }
     }
 }

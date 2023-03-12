@@ -6,23 +6,23 @@ namespace UnityEngine.Rendering.SelfUniversal
 
     internal class TransparentSettingsPass : ScriptableRenderPass
     {
-        bool m_shouldReceiveShadows;
+        bool _mShouldTransparentReceiveShadowsTransparent;
 
         const string m_ProfilerTag = "Transparent Settings Pass";
         private static readonly ProfilingSampler m_ProfilingSampler = new ProfilingSampler(m_ProfilerTag);
 
-        public TransparentSettingsPass(RenderPassEvent evt, bool shadowReceiveSupported)
+        public TransparentSettingsPass(RenderPassEvent evt, bool shadowTransparentReceive)
         {
             base.profilingSampler = new ProfilingSampler(nameof(TransparentSettingsPass));
             renderPassEvent = evt;
-            m_shouldReceiveShadows = shadowReceiveSupported;
+            this._mShouldTransparentReceiveShadowsTransparent = shadowTransparentReceive;
         }
 
         public bool Setup(ref RenderingData renderingData)
         {
             // Currently we only need to enqueue this pass when the user
             // doesn't want transparent objects to receive shadows
-            return !m_shouldReceiveShadows;
+            return !this._mShouldTransparentReceiveShadowsTransparent;
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
@@ -32,9 +32,9 @@ namespace UnityEngine.Rendering.SelfUniversal
             using (new ProfilingScope(cmd, m_ProfilingSampler))
             {
                 // Toggle light shadows enabled based on the renderer setting set in the constructor
-                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MainLightShadows, m_shouldReceiveShadows);
-                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MainLightShadowCascades, m_shouldReceiveShadows);
-                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightShadows, m_shouldReceiveShadows);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MainLightShadows, this._mShouldTransparentReceiveShadowsTransparent);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MainLightShadowCascades, this._mShouldTransparentReceiveShadowsTransparent);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightShadows, this._mShouldTransparentReceiveShadowsTransparent);
             }
 
             // Execute and release the command buffer...

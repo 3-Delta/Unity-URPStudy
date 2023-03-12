@@ -965,12 +965,15 @@ namespace UnityEngine.Rendering.SelfUniversal
         void ExecuteRenderPass(ScriptableRenderContext context, ScriptableRenderPass renderPass,
             ref RenderingData renderingData)
         {
+            // 核心步骤
+            // renderPass.Configure(cmd, cameraData.cameraTargetDescriptor);
+            // SetRenderPassAttachments(cmd, renderPass, ref cameraData);
+            // renderPass.Execute(context, ref renderingData);
+            
             // TODO: Separate command buffers per pass break the profiling scope order/hierarchy.
             // If a single buffer is used (passed as a param) and passed to renderPass.Execute, put the scope into command buffer (i.e. null -> cmd)
             using var profScope = new ProfilingScope(null, renderPass.profilingSampler);
-
             ref CameraData cameraData = ref renderingData.cameraData;
-
             CommandBuffer cmd = CommandBufferPool.Get();
 
             // Track CPU only as GPU markers for this scope were "too noisy".
@@ -1008,8 +1011,9 @@ namespace UnityEngine.Rendering.SelfUniversal
             // Note: we only check color buffers. This is only technically correct because for shadowmaps and depth only passes
             // we bind depth as color and Unity handles it underneath. so we never have a situation that all color buffers are null and depth is bound.
             uint validColorBuffersCount = RenderingUtils.GetValidColorBufferCount(renderPass.colorAttachments);
-            if (validColorBuffersCount == 0)
+            if (validColorBuffersCount == 0) {
                 return;
+            }
 
             // We use a different code path for MRT since it calls a different version of API SetRenderTarget
             if (RenderingUtils.IsMRT(renderPass.colorAttachments))
@@ -1133,7 +1137,6 @@ namespace UnityEngine.Rendering.SelfUniversal
             else
             {
                 // Currently in non-MRT case, color attachment can actually be a depth attachment.
-
                 RenderTargetIdentifier passColorAttachment = renderPass.colorAttachment;
                 RenderTargetIdentifier passDepthAttachment = renderPass.depthAttachment;
 
