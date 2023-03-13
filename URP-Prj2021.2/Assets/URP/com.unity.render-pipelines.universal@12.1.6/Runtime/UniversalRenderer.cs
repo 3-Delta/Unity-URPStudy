@@ -407,7 +407,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             if (isOffscreenDepthTexture)
             {
                 ConfigureCameraTarget(BuiltinRenderTextureType.CameraTarget, BuiltinRenderTextureType.CameraTarget);
-                AddRenderPasses(ref renderingData);
+                this.AddFeaturesPasses(ref renderingData);
                 EnqueuePass(m_RenderOpaqueForwardPass);
 
                 // TODO: Do we need to inject transparents and skybox when rendering depth only camera? They don't write to depth.
@@ -426,7 +426,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 m_DeferredLights.IsOverlay = cameraData.renderType == CameraRenderType.Overlay;
             }
 
-            // Assign the camera color target early in case it is needed during AddRenderPasses.
+            // Assign the camera color target early in case it is needed during AddFeaturesPasses.
             bool isPreviewCamera = cameraData.isPreviewCamera;
             var createColorTexture = m_IntermediateTextureMode == IntermediateTextureMode.Always && !isPreviewCamera;
             if (createColorTexture)
@@ -441,7 +441,7 @@ namespace UnityEngine.Rendering.SelfUniversal
 
             // Add render passes and gather the input requirements
             isCameraColorTargetValid = true;
-            AddRenderPasses(ref renderingData);
+            this.AddFeaturesPasses(ref renderingData);
             isCameraColorTargetValid = false;
             RenderPassInputSummary renderPassInputs = GetRenderPassInputs(ref renderingData);
 

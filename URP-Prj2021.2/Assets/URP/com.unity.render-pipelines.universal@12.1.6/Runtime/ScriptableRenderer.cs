@@ -30,7 +30,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             public static readonly ProfilingSampler sortRenderPasses = new ProfilingSampler($"Sort Render Passes");
             public static readonly ProfilingSampler setupLights = new ProfilingSampler($"{k_Name}.{nameof(SetupLights)}");
             public static readonly ProfilingSampler setupCamera = new ProfilingSampler($"Setup Camera Parameters");
-            public static readonly ProfilingSampler addRenderPasses = new ProfilingSampler($"{k_Name}.{nameof(AddRenderPasses)}");
+            public static readonly ProfilingSampler addRenderPasses = new ProfilingSampler($"{k_Name}.{nameof(AddFeaturesPasses)}");
             public static readonly ProfilingSampler clearRenderingState = new ProfilingSampler($"{k_Name}.{nameof(ClearRenderingState)}");
             public static readonly ProfilingSampler internalStartRendering = new ProfilingSampler($"{k_Name}.{nameof(InternalStartRendering)}");
             public static readonly ProfilingSampler internalFinishRendering = new ProfilingSampler($"{k_Name}.{nameof(InternalFinishRendering)}");
@@ -863,11 +863,11 @@ namespace UnityEngine.Rendering.SelfUniversal
         }
 
         /// <summary>
-        /// Calls <c>AddRenderPasses</c> for each feature added to this renderer.
+        /// Calls <c>AddFeaturesPasses</c> for each feature added to this renderer.
         /// <seealso cref="ScriptableRendererFeature.AddRenderPasses(ScriptableRenderer, ref RenderingData)"/>
         /// </summary>
         /// <param name="renderingData"></param>
-        protected void AddRenderPasses(ref RenderingData renderingData)
+        protected void AddFeaturesPasses(ref RenderingData renderingData)
         {
             using var profScope = new ProfilingScope(null, Profiling.addRenderPasses);
 
