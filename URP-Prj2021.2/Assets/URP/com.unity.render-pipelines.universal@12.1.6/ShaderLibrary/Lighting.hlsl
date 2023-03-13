@@ -118,6 +118,8 @@ half3 VertexLighting(float3 positionWS, half3 normalWS)
 {
     half3 vertexLightColor = half3(0.0, 0.0, 0.0);
 
+    // 顶点光照， PerVetex设置
+    // 只计算 diffuse，不计算高光，因为高光计算不是线性
 #ifdef _ADDITIONAL_LIGHTS_VERTEX
     uint lightsCount = GetAdditionalLightsCount();
     LIGHT_LOOP_BEGIN(lightsCount)
@@ -315,6 +317,7 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
     LIGHT_LOOP_END
     #endif
 
+    // 顶点光照，在frag中 * diffuse
     #if defined(_ADDITIONAL_LIGHTS_VERTEX)
     lightingData.vertexLightingColor += inputData.vertexLighting * brdfData.diffuse;
     #endif

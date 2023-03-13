@@ -1033,7 +1033,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             renderingData.cameraData = cameraData;
             // 光照
             InitializeLightData(settings, visibleLights, mainLightIndex, out renderingData.lightData);
-            // 阴影
+            // 阴影 逐顶点光照不投射阴影
             InitializeShadowData(settings, visibleLights, mainLightCastShadows, addiLightsCastShadows && !renderingData.lightData.shadeAdditionalLightsPerVertex, out renderingData.shadowData);
             // 后处理
             InitializePostProcessingData(settings, out renderingData.postProcessingData);

@@ -662,8 +662,10 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                     {
                         // We need to iterate the lights even though additional lights are disabled because
                         // cullResults.GetShadowCasterBounds() does the fence sync for the shadow culling jobs.
-                        if (!renderingData.shadowData.supportsAdditionalLightShadows)
+                        if (!renderingData.shadowData.supportsAdditionalLightShadows) {
+                            // pervetex光照不投射阴影
                             continue;
+                        }
 
                         if (IsValidShadowCastingLight(ref renderingData.lightData, visibleLightIndex))
                         {
@@ -728,13 +730,15 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                     }
                 }
 
-                if (isValidShadowCastingLight)
+                if (isValidShadowCastingLight) {
                     validShadowCastingLightsCount++;
+                }
             }
 
             // Lights that need to be rendered in the shadow map atlas
-            if (validShadowCastingLightsCount == 0)
+            if (validShadowCastingLightsCount == 0) {
                 return SetupForEmptyRendering(ref renderingData);
+            }
 
             int shadowCastingLightsBufferCount = m_ShadowSliceToAdditionalLightIndex.Count;
 
@@ -822,6 +826,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
         {
             if (m_CreateEmptyShadowmap)
             {
+                // 不绘制shadowmap, 因为内部没有调用ShadowDrawingSettings
                 SetEmptyAdditionalShadowmapAtlas(ref context);
                 return;
             }
