@@ -43,6 +43,8 @@ namespace UnityEngine.Rendering.SelfUniversal
 
         [SerializeField] internal List<ScriptableRendererFeature> m_RendererFeatures = new List<ScriptableRendererFeature>(10);
         [SerializeField] internal List<long> m_RendererFeatureMap = new List<long>(10);
+        
+        // subpass
         [SerializeField] bool m_UseNativeRenderPass = false;
 
         /// <summary>

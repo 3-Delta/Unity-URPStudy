@@ -177,6 +177,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                     this.m_DirectionalLightCount -= 1;
                 }
                 
+                // 从这里可以得出：visibleLights是按照平行光在前，其他光源在后的方式排序的
                 // cullResult的非平行光
                 var visibleUnDirLights = renderingData.lightData.visibleLights.GetSubArray(lightOffset, lightCount);
                 var lightsPerTile = UniversalRenderPipeline.lightsPerTile;
