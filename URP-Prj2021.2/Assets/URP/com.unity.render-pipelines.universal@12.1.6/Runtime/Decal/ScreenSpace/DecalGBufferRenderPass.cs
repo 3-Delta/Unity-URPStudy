@@ -54,7 +54,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             else
                 m_GbufferAttachments = m_DeferredLights.GbufferAttachmentIdentifiers;
 
-            ConfigureTarget(m_GbufferAttachments, m_DeferredLights.DepthAttachmentIdentifier);
+            this.OverrideCameraAttachment(m_GbufferAttachments, m_DeferredLights.DepthAttachmentIdentifier);
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)

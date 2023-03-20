@@ -105,7 +105,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 depthIdentifier = deferredLights.DepthAttachmentIdentifier;
             }
 
-            ConfigureTarget(dBufferColorIndentifiers, depthIdentifier);
+            this.OverrideCameraAttachment(dBufferColorIndentifiers, depthIdentifier);
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)

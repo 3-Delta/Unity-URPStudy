@@ -391,16 +391,16 @@ namespace UnityEngine.Rendering.SelfUniversal
         /// <param name="colorAttachment">Color attachment identifier.</param>
         /// <param name="depthAttachment">Depth attachment identifier.</param>
         /// <seealso cref="Configure"/>
-        public void ConfigureTarget(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment)
+        public void OverrideCameraAttachment(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment)
         {
             m_DepthAttachment = depthAttachment;
-            ConfigureTarget(colorAttachment);
+            this.OverrideCameraAttachment(colorAttachment);
         }
 
-        internal void ConfigureTarget(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment, GraphicsFormat format)
+        internal void OverrideCameraAttachment(RenderTargetIdentifier colorAttachment, RenderTargetIdentifier depthAttachment, GraphicsFormat format)
         {
             m_DepthAttachment = depthAttachment;
-            ConfigureTarget(colorAttachment, format);
+            this.OverrideCameraAttachment(colorAttachment, format);
         }
 
         /// <summary>
@@ -410,7 +410,7 @@ namespace UnityEngine.Rendering.SelfUniversal
         /// <param name="colorAttachment">Color attachment identifier.</param>
         /// <param name="depthAttachment">Depth attachment identifier.</param>
         /// <seealso cref="Configure"/>
-        public void ConfigureTarget(RenderTargetIdentifier[] colorAttachments, RenderTargetIdentifier depthAttachment)
+        public void OverrideCameraAttachment(RenderTargetIdentifier[] colorAttachments, RenderTargetIdentifier depthAttachment)
         {
             overrideCameraTarget = true;
 
@@ -422,9 +422,9 @@ namespace UnityEngine.Rendering.SelfUniversal
             m_DepthAttachment = depthAttachment;
         }
 
-        internal void ConfigureTarget(RenderTargetIdentifier[] colorAttachments, RenderTargetIdentifier depthAttachment, GraphicsFormat[] formats)
+        internal void OverrideCameraAttachment(RenderTargetIdentifier[] colorAttachments, RenderTargetIdentifier depthAttachment, GraphicsFormat[] formats)
         {
-            ConfigureTarget(colorAttachments, depthAttachment);
+            this.OverrideCameraAttachment(colorAttachments, depthAttachment);
             for (int i = 0; i < formats.Length; ++i)
                 renderTargetFormat[i] = formats[i];
         }
@@ -435,7 +435,7 @@ namespace UnityEngine.Rendering.SelfUniversal
         /// </summary>
         /// <param name="colorAttachment">Color attachment identifier.</param>
         /// <seealso cref="Configure"/>
-        public void ConfigureTarget(RenderTargetIdentifier colorAttachment)
+        public void OverrideCameraAttachment(RenderTargetIdentifier colorAttachment)
         {
             overrideCameraTarget = true;
 
@@ -444,9 +444,9 @@ namespace UnityEngine.Rendering.SelfUniversal
                 m_ColorAttachments[i] = 0;
         }
 
-        internal void ConfigureTarget(RenderTargetIdentifier colorAttachment, GraphicsFormat format, int width = -1, int height = -1, int sampleCount = -1, bool depth = false)
+        internal void OverrideCameraAttachment(RenderTargetIdentifier colorAttachment, GraphicsFormat format, int width = -1, int height = -1, int sampleCount = -1, bool depth = false)
         {
-            ConfigureTarget(colorAttachment);
+            this.OverrideCameraAttachment(colorAttachment);
             for (int i = 1; i < m_ColorAttachments.Length; ++i)
                 renderTargetFormat[i] = GraphicsFormat.None;
 
@@ -468,9 +468,9 @@ namespace UnityEngine.Rendering.SelfUniversal
         /// </summary>
         /// <param name="colorAttachment">Color attachment identifier.</param>
         /// <seealso cref="Configure"/>
-        public void ConfigureTarget(RenderTargetIdentifier[] colorAttachments)
+        public void OverrideCameraAttachment(RenderTargetIdentifier[] colorAttachments)
         {
-            ConfigureTarget(colorAttachments, BuiltinRenderTextureType.CameraTarget);
+            this.OverrideCameraAttachment(colorAttachments, BuiltinRenderTextureType.CameraTarget);
         }
 
         /// <summary>
@@ -489,7 +489,7 @@ namespace UnityEngine.Rendering.SelfUniversal
         /// This method is called by the renderer before rendering a camera
         /// Override this method if you need to to configure render targets and their clear state, and to create temporary render target textures.
         /// If a render pass doesn't override this method, this render pass renders to the active Camera's render target.
-        /// You should never call CommandBuffer.SetRenderTarget. Instead call <c>ConfigureTarget</c> and <c>ConfigureClear</c>.
+        /// You should never call CommandBuffer.SetRenderTarget. Instead call <c>OverrideCameraAttachment</c> and <c>ConfigureClear</c>.
         /// </summary>
         /// <param name="cmd">CommandBuffer to enqueue rendering commands. This will be executed by the pipeline.</param>
         /// <param name="renderingData">Current rendering state information</param>
@@ -502,7 +502,7 @@ namespace UnityEngine.Rendering.SelfUniversal
         /// This method is called by the renderer before executing the render pass.
         /// Override this method if you need to to configure render targets and their clear state, and to create temporary render target textures.
         /// If a render pass doesn't override this method, this render pass renders to the active Camera's render target.
-        /// You should never call CommandBuffer.SetRenderTarget. Instead call <c>ConfigureTarget</c> and <c>ConfigureClear</c>.
+        /// You should never call CommandBuffer.SetRenderTarget. Instead call <c>OverrideCameraAttachment</c> and <c>ConfigureClear</c>.
         /// </summary>
         /// <param name="cmd">CommandBuffer to enqueue rendering commands. This will be executed by the pipeline.</param>
         /// <param name="cameraTextureDescriptor">Render texture descriptor of the camera render target.</param>

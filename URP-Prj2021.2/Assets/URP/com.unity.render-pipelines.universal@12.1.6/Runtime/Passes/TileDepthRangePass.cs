@@ -41,7 +41,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 desc = new RenderTextureDescriptor(tileDepthRangeWidth, tileDepthRangeHeight, UnityEngine.Experimental.Rendering.GraphicsFormat.R32_UInt, 0);
             }
             cmd.GetTemporaryRT(outputTex.id, desc, FilterMode.Point);
-            base.ConfigureTarget(outputTex.Identifier());
+            base.OverrideCameraAttachment(outputTex.Identifier());
         }
 
         /// <inheritdoc/>

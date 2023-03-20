@@ -33,7 +33,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
 
             // TODO: change to m_DeferredLights.GetGBufferFormat(m_DeferredLights.GBufferLightingIndex) when it's not GraphicsFormat.None
             // TODO: Cannot currently bind depth texture as read-only!
-            ConfigureTarget(lightingAttachmentId, depthAttachmentId, cameraTextureDescripor.graphicsFormat);
+            this.OverrideCameraAttachment(lightingAttachmentId, depthAttachmentId, cameraTextureDescripor.graphicsFormat);
         }
 
         // ScriptableRenderPass

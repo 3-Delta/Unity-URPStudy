@@ -321,7 +321,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 cmd.GetTemporaryRT(s_SSAOTextureFinalID, m_FinalDescriptor, FilterMode.Bilinear);
 
                 // Configure targets and clear color
-                ConfigureTarget(m_CurrentSettings.AfterOpaque ? m_Renderer.colorRT : s_SSAOTexture2ID);
+                this.OverrideCameraAttachment(m_CurrentSettings.AfterOpaque ? m_Renderer.colorRT : s_SSAOTexture2ID);
                 ConfigureClear(ClearFlag.None, Color.white);
             }
 

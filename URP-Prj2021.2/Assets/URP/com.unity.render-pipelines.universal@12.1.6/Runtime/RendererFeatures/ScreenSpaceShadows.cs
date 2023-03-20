@@ -135,7 +135,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 cmd.GetTemporaryRT(m_RenderTarget.id, m_RenderTextureDescriptor, FilterMode.Point);
 
                 RenderTargetIdentifier renderTargetTexture = m_RenderTarget.Identifier();
-                ConfigureTarget(renderTargetTexture);
+                this.OverrideCameraAttachment(renderTargetTexture);
                 ConfigureClear(ClearFlag.None, Color.white);
             }
 
@@ -195,7 +195,7 @@ namespace UnityEngine.Rendering.SelfUniversal
 
             public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
             {
-                ConfigureTarget(BuiltinRenderTextureType.CurrentActive);
+                this.OverrideCameraAttachment(BuiltinRenderTextureType.CurrentActive);
             }
 
             public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)

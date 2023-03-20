@@ -84,14 +84,14 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
 
             if (renderingData.cameraData.renderer.useDepthPriming && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth))
             {
-                ConfigureTarget(
+                this.OverrideCameraAttachment(
                     new RenderTargetIdentifier(normalHandle.Identifier(), 0, CubemapFace.Unknown, -1),
                     new RenderTargetIdentifier(renderingData.cameraData.renderer.depthRT, 0, CubemapFace.Unknown, -1)
                 );
             }
             else
             {
-                ConfigureTarget(
+                this.OverrideCameraAttachment(
                     new RenderTargetIdentifier(normalHandle.Identifier(), 0, CubemapFace.Unknown, -1),
                     new RenderTargetIdentifier(depthHandle.Identifier(), 0, CubemapFace.Unknown, -1)
                 );

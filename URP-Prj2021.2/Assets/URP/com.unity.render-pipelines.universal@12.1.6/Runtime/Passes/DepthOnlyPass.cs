@@ -55,19 +55,20 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
 
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         {
-            if (this.allocateDepth)
+            if (this.allocateDepth) {
                 cmd.GetTemporaryRT(depthAttachmentHandle.id, descriptor, FilterMode.Point);
+            }
             var desc = renderingData.cameraData.cameraTargetDescriptor;
 
             // When depth priming is in use the camera target should not be overridden so the Camera's MSAA depth attachment is used.
             if (renderingData.cameraData.renderer.useDepthPriming && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth))
             {
-                ConfigureTarget(renderingData.cameraData.renderer.depthRT, descriptor.depthStencilFormat, desc.width, desc.height, 1, true);
+                this.OverrideCameraAttachment(renderingData.cameraData.renderer.depthRT, descriptor.depthStencilFormat, desc.width, desc.height, 1, true);
             }
             // When not using depth priming the camera target should be set to our non MSAA depth target.
             else
             {
-                ConfigureTarget(new RenderTargetIdentifier(depthAttachmentHandle.Identifier(), 0, CubemapFace.Unknown, -1), descriptor.depthStencilFormat, desc.width, desc.height, 1, true);
+                this.OverrideCameraAttachment(new RenderTargetIdentifier(depthAttachmentHandle.Identifier(), 0, CubemapFace.Unknown, -1), descriptor.depthStencilFormat, desc.width, desc.height, 1, true);
             }
 
             // Only clear depth here so we don't clear any bound color target. It might be unused by this pass but that doesn't mean we can just clear it. (e.g. in case of overlay cameras + depth priming)

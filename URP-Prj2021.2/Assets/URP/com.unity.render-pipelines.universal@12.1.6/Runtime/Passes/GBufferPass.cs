@@ -85,7 +85,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 }
             }
 
-            ConfigureTarget(m_DeferredLights.GbufferAttachmentIdentifiers, m_DeferredLights.DepthAttachmentIdentifier, m_DeferredLights.GbufferFormats);
+            this.OverrideCameraAttachment(m_DeferredLights.GbufferAttachmentIdentifiers, m_DeferredLights.DepthAttachmentIdentifier, m_DeferredLights.GbufferFormats);
 
             // We must explicitely specify we don't want any clear to avoid unwanted side-effects.
             // ScriptableRenderer will implicitely force a clear the first time the camera color/depth targets are bound.

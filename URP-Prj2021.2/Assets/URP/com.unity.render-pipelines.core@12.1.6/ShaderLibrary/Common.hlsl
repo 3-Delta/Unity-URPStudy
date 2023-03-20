@@ -1096,6 +1096,7 @@ static const float4x4 k_identity4x4 = {1, 0, 0, 0,
 
 float4 ComputeClipSpacePosition(float2 positionNDC, float deviceDepth)
 {
+    // 从[0, 1] 到 [-1, 1], 而且z其实没有 /w
     float4 positionCS = float4(positionNDC * 2.0 - 1.0, deviceDepth, 1.0);
 
 #if UNITY_UV_STARTS_AT_TOP

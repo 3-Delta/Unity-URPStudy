@@ -46,7 +46,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
             // Configure Render Target
             m_MotionVectorHandle.Init(kMotionVectorTexture);
             cmd.GetTemporaryRT(m_MotionVectorHandle.id, rtd, FilterMode.Point);
-            ConfigureTarget(m_MotionVectorHandle.Identifier(), m_MotionVectorHandle.Identifier());
+            this.OverrideCameraAttachment(m_MotionVectorHandle.Identifier(), m_MotionVectorHandle.Identifier());
         }
 
         #endregion

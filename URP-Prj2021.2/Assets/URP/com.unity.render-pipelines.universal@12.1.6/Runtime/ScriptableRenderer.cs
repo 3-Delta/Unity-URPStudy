@@ -1140,7 +1140,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 RenderTargetIdentifier passColorAttachment = renderPass.colorAttachment;
                 RenderTargetIdentifier passDepthAttachment = renderPass.depthAttachment;
 
-                // When render pass doesn't call ConfigureTarget we assume it's expected to render to camera target
+                // When render pass doesn't call OverrideCameraAttachment we assume it's expected to render to camera target
                 // which might be backbuffer or the framebuffer render textures.
 
                 if (!renderPass.overrideCameraTarget)

@@ -36,7 +36,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
             cmd.GetTemporaryRT(m_ScreenSpaceShadowmap.id, m_RenderTextureDescriptor, FilterMode.Bilinear);
 
             RenderTargetIdentifier screenSpaceOcclusionTexture = m_ScreenSpaceShadowmap.Identifier();
-            ConfigureTarget(screenSpaceOcclusionTexture);
+            this.OverrideCameraAttachment(screenSpaceOcclusionTexture);
             ConfigureClear(ClearFlag.All, Color.white);
         }
 
