@@ -248,6 +248,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 var zSortJob = new RadixSortJob
                 {
                     // Floats can be sorted bitwise with no special handling if positive floats only
+                    // keys在基数排序之后无用了
                     keys = meanZsNA.Reinterpret<uint>(),
                     indices = indicesNA
                 };
