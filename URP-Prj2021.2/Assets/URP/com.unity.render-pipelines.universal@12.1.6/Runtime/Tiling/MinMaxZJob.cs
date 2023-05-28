@@ -21,7 +21,8 @@ namespace UnityEngine.Rendering.SelfUniversal
         
         // 记录light的最远/最近影响vs距离
         public NativeArray<LightMinMaxZ> minMaxZs;
-        public NativeArray<float> meanZs;
+        // 记录light的平均距离
+        public NativeArray<float> midZs;
 
         public void Execute(int index)
         {
@@ -48,6 +49,7 @@ namespace UnityEngine.Rendering.SelfUniversal
                 float3 spotDirectionWS = lightToWorld.c2.xyz;
                 var endPointWS = lightPosWS + spotDirectionWS * coneHeight;
                 var endPointVS = math.mul(worldToViewMatrix, math.float4(endPointWS, 1)).xyz;
+                // 由于在观察空间中，z轴方向和世界坐标系的方向相反，因此需要将lightPosVS.z乘以-1来进行矫正
                 endPointVS.z *= -1;
                 
                 var angleB = math.PI * 0.5f - angleA;
@@ -70,7 +72,7 @@ namespace UnityEngine.Rendering.SelfUniversal
             minMax.maxZ = math.max(minMax.maxZ, 0);
             minMaxZs[index] = minMax;
             
-            meanZs[index] = (minMax.minZ + minMax.maxZ) / 2.0f;
+            this.midZs[index] = (minMax.minZ + minMax.maxZ) / 2.0f;
         }
     }
 }

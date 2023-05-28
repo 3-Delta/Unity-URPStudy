@@ -5,7 +5,7 @@ using Unity.Jobs;
 namespace UnityEngine.Rendering.SelfUniversal {
     // This could be multi-threaded if profiling shows need
     [BurstCompile]
-    // 基数排序
+    // 基数排序 https://www.cnblogs.com/skywang12345/p/3603669.html
     public unsafe struct RadixSortJob : IJob {
         public NativeArray<uint> keys;
         public NativeArray<int> indices;

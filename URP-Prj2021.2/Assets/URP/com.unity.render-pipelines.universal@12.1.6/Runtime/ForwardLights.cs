@@ -228,7 +228,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 
                 using var minMaxZsNA = new NativeArray<LightMinMaxZ>(lightCount, Allocator.TempJob);
                 // We allocate double array length because the sorting algorithm needs swap space to work in.
-                using var meanZsNA = new NativeArray<float>(lightCount * 2, Allocator.TempJob);
+                using var midZsNA = new NativeArray<float>(lightCount * 2, Allocator.TempJob);
 
                 Matrix4x4 worldToViewMatrix = renderingData.cameraData.GetViewMatrix();
                 var minMaxZJob = new MinMaxZJob
@@ -236,7 +236,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                     worldToViewMatrix = worldToViewMatrix,
                     lights = visibleUnDirLights,
                     minMaxZs = minMaxZsNA,
-                    meanZs = meanZsNA
+                    midZs = midZsNA
                 };
                 // Innerloop batch count of 32 is not special, just a handwavy amount to not have too much scheduling overhead nor too little parallelism.
                 var minMaxZJobHandle = minMaxZJob.ScheduleParallel(lightCount, 32, new JobHandle());
@@ -249,7 +249,7 @@ namespace UnityEngine.Rendering.SelfUniversal.Internal
                 {
                     // Floats can be sorted bitwise with no special handling if positive floats only
                     // keys在基数排序之后无用了
-                    keys = meanZsNA.Reinterpret<uint>(),
+                    keys = midZsNA.Reinterpret<uint>(),
                     indices = indicesNA
                 };
                 var zSortJobHandle = zSortJob.Schedule(minMaxZJobHandle);
